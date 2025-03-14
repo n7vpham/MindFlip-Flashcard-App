@@ -11,4 +11,4 @@ Hello! This is our project for ITSC-4155. The aim of our project is to create a 
  - Janie Ita
  - Brody Banner
  - Isaac Reed
- - Brody Banner
+ - Nam Pham
