@@ -5,6 +5,9 @@ from pymongo.server_api import ServerApi
 
 load_dotenv()
 
+# Add URI=mongodb+srv://<username>:<password>@fsb-cluster.7u2uh.mongodb.net/?retryWrites=true&w=majority&appName=fsb-cluster
+# to the .env file
+# update <username> and <password> with your credentials from mongo
 uri = os.environ.get('URI')
 
 # Create a new client and connect to the server
