@@ -19,7 +19,7 @@ Configure your connection to the database by creating a .env file and adding thi
 ```bash
 URI=mongodb+srv://<username>:<password>@fsb-cluster.7u2uh.mongodb.net/?retryWrites=true&w=majority&appName=fsb-cluster
 ```
-Make sure to replace <username> and <password> with your credentials found on Mongo.
+Make sure to replace &lt;username&gt; and &lt;password&gt; with your credentials found on Mongo.
 
 Run the server by entering this in the command line:
 ```bash
