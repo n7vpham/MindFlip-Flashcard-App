@@ -1,9 +1,7 @@
-from pymongo import MongoClient
+from .. import db
 
-# Will need connection to client
-client = MongoClient()
-
-db = client['study-guide']
+class Flashcard:
+    pass
 
 flashcards_schema = {
     "validator": {
