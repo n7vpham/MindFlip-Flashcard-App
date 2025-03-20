@@ -3,6 +3,7 @@ from .. import db
 class Flashcard:
     pass
 
+# TODO: recreate this as flask model class above
 flashcards_schema = {
     "validator": {
         "$jsonSchema": {
