@@ -12,3 +12,16 @@ Hello! This is our project for ITSC-4155. The aim of our project is to create a 
  - Brody Banner
  - Isaac Reed
  - Nam Pham
+
+## Backend Development
+To start the backend development server, first navigate to /4155-study-project/backend.
+Configure your connection to the database by creating a .env file and adding this line:
+```bash
+URI=mongodb+srv://<username>:<password>@fsb-cluster.7u2uh.mongodb.net/?retryWrites=true&w=majority&appName=fsb-cluster
+```
+Make sure to replace &lt;username&gt; and &lt;password&gt; with your credentials found on Mongo.
+
+Run the server by entering this in the command line:
+```bash
+python run.py
+```
