@@ -4,6 +4,17 @@ from bson.objectid import ObjectId
 
 collection = db['users']
 
+def get_id_from_username(username):
+    try:
+        result = collection.find_one({"username": username})
+        if result is not None:
+            return result['_id']
+        else:
+            return None
+    except Exception as e:
+        print(e)
+        return None
+
 def save_user(json):
     try:
         user = json_util.loads(json)
