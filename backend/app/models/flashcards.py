@@ -83,29 +83,28 @@ def delete_flashcard(set_id, flashcard_index):
         return False
 
 
-# TODO: recreate this as flask model class above
-flashcards_schema = {
-    "validator": {
-        "$jsonSchema": {
-            "bsonType": "object",
-            "required": ["setID", "setName", "setDescription", "timeStamp", "terms"],
-            "properties": {
-                "setID": {"bsonType": "string"},
-                "setName": {"bsonType": "string"},
-                "setDescription": {"bsonType": "string"},
-                "timeStamp": {"bsonType": "date"},
-                "terms": {
-                    "bsonType": "array",
-                    "items": {
-                        "bsonType": "object",
-                        "required": ["term", "definition"],
-                        "properties": {
-                            "term": {"bsonType": "string"},
-                            "definition": {"bsonType": "string"}
-                        }
-                    }
-               }
-           }
-        }
-    }
-}
+# flashcards_schema = {
+#     "validator": {
+#         "$jsonSchema": {
+#             "bsonType": "object",
+#             "required": ["setID", "setName", "setDescription", "timeStamp", "terms"],
+#             "properties": {
+#                 "setID": {"bsonType": "string"},
+#                 "setName": {"bsonType": "string"},
+#                 "setDescription": {"bsonType": "string"},
+#                 "timeStamp": {"bsonType": "date"},
+#                 "terms": {
+#                     "bsonType": "array",
+#                     "items": {
+#                         "bsonType": "object",
+#                         "required": ["term", "definition"],
+#                         "properties": {
+#                             "term": {"bsonType": "string"},
+#                             "definition": {"bsonType": "string"}
+#                         }
+#                     }
+#                }
+#            }
+#         }
+#     }
+# }
