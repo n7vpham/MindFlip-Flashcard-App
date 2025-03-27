@@ -21,6 +21,22 @@ def save_flashcard(set_id, flashcard):
         print(e)
         return None
 
+def get_set(set_id):
+    try:
+        study_set = collection.find_one({"_id": ObjectId(set_id)})
+        return study_set
+    except Exception as e:
+        print(e)
+        return None
+
+def get_all_sets():
+    try:
+        cursor = collection.find()
+        return list(cursor)
+    except Exception as e:
+        print(e)
+        return None
+
 def get_flashcards(set_id):
     try:
         study_set = collection.find_one({"_id", ObjectId(set_id)}, {"flashcards", 1})
@@ -32,34 +48,39 @@ def get_flashcards(set_id):
         print(e)
         return None
 
-def get_flashcard(user_id):
+def update_set(set_id, json):
     try:
-        user = collection.find_one({"_id": user_id})
-        return user
-    except Exception as e:
-        print(e)
-        return None
-
-def update_user(user_id, json):
-    try:
-        new_user = json_util.loads(json)
-        user = collection.replace_one({"_id": ObjectId(user_id)}, new_user)
-        if user is None:
-            raise
-        else:
-            return user.modified_count > 0
+        new_set = json_util.loads(json)
+        result = collection.replace_one({"_id": ObjectId(set_id)}, new_set)
+        return result.modified_count > 0
     except Exception as e:
         print(e)
         return False
 
-def delete_user(user_id):
+def update_flashcard(set_id, flashcard_index, new_card):
     try:
-        user = collection.delete_one({"_id": user_id})
-        return user.deleted_count > 0
+        result = collection.update_one({"_id": ObjectId(set_id)}, {"$set": {f"flashcards.{flashcard_index}": new_card}})
+        return result.modified_count > 0
     except Exception as e:
         print(e)
         return False
 
+def delete_set(set_id):
+    try:
+        result = collection.delete_one({"_id": ObjectId(set_id)})
+        return result.deleted_count > 0
+    except Exception as e:
+        print(e)
+        return False
+
+# Technically an update function on a study set. $unset aggregation
+def delete_flashcard(set_id, flashcard_index):
+    try:
+        result = collection.update_one({"_id": ObjectId(set_id)}, {"$unset": {f"flashcard.{flashcard_index}": 1}})
+        return result.modified_count > 0
+    except Exception as e:
+        print(e)
+        return False
 
 
 # TODO: recreate this as flask model class above

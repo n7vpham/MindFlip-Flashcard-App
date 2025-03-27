@@ -23,7 +23,7 @@ def get_users():
 
 def get_user_by_id(user_id):
     try:
-        user = collection.find_one({"_id": user_id})
+        user = collection.find_one({"_id": ObjectId(user_id)})
         return user
     except Exception as e:
         print(e)
@@ -43,7 +43,7 @@ def update_user(user_id, json):
 
 def delete_user(user_id):
     try:
-        user = collection.delete_one({"_id": user_id})
+        user = collection.delete_one({"_id": ObjectId(user_id)})
         return user.deleted_count > 0
     except Exception as e:
         print(e)
