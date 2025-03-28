@@ -12,6 +12,7 @@ decorator==5.2.1
 defusedxml==0.7.1
 dnspython==2.7.0
 docopt==0.6.2
+dotenv==0.9.9
 executing==2.2.0
 fastjsonschema==2.21.1
 Flask==3.1.0
@@ -46,6 +47,7 @@ pure_eval==0.2.3
 Pygments==2.19.1
 pymongo==4.11.2
 python-dateutil==2.9.0.post0
+python-dotenv==1.1.0
 pyzmq==26.3.0
 referencing==0.36.2
 requests==2.32.3
