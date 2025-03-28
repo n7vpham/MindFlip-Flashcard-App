@@ -1,7 +1,8 @@
-from .. import db
 from bson import json_util
 from bson.objectid import ObjectId
+from flask import Blueprint, current_app, jsonify
 
+db = current_app.config['DB']
 collection = db['flashcards']
 
 def save_set(json):
