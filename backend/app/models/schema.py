@@ -2,15 +2,15 @@ from marshmallow import Schema, fields, validate
 
 # Keeping this commented for simpler testing purposes...
 class UserSchema(Schema):
-    # username = fields.String(required=True, validate=validate.Length(3, 20), allow_none=False)
-    # password = fields.String(required=True, validate=validate.Length(min=8), allow_none=False)
-    # email = fields.Email(required=True)
-    firstName = fields.String(required=True, validate=validate.Length(2, 15), allow_none=False)
-    lastName = fields.String(required=True, validate=validate.Length(2, 15), allow_none=False)
-    # studySets = fields.Dict(required=False)
+    # firstName = fields.String(required=True, validate=validate.Length(2, 15), allow_none=False)
+    # lastName = fields.String(required=True, validate=validate.Length(2, 15), allow_none=False)
+    email = fields.Email(required=True)
+    password = fields.String(required=True, validate=validate.Length(min=8), allow_none=False)
+    # fullName = fields.String(required=True, allow_none=False)
+    flashCards = fields.Dict(required=False, keys=fields.Str() , values=fields.Str()) # Key: Set ID, Value: Set Name
 
 
-class StudySetSchema(Schema):
+class flashcardsSchema(Schema):
     setName = fields.String(required=True, validate=validate.Length(1, 20), allow_none=False)
     timeStamp = fields.Time(required=False)
     setDescription = fields.String(required=True, validate=validate.Length(min=10), allow_none=False)
