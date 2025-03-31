@@ -34,6 +34,8 @@ def get_users_route():
 # Creates a new user
 # Returns a success message if a new user was created
 
+# Need something that checks if email is already used to create account.
+
 @user_bp.route("/", methods=['POST'])
 def create_user_route():
     try:

@@ -5,6 +5,7 @@ from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 from .routes import main_bp
 from .routes.users import user_bp
+from .routes.flashcards import flashcard_bp
 
 load_dotenv()
 
@@ -13,7 +14,7 @@ load_dotenv()
 # update <username> and <password> with your credentials from mongo
 
 def create_app(config_name="default"):
-    app = Flask(__name__, template_folder='../../templates')
+    app = Flask(__name__, template_folder='../../templates', static_folder='../../static')
 
     uri = os.environ.get('URI')
     if not uri:
@@ -32,5 +33,6 @@ def create_app(config_name="default"):
 
     app.register_blueprint(main_bp)
     app.register_blueprint(user_bp)
+    app.register_blueprint(flashcard_bp)
 
     return app
