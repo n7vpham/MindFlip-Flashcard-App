@@ -13,7 +13,7 @@ load_dotenv()
 # update <username> and <password> with your credentials from mongo
 
 def create_app(config_name="default"):
-    app = Flask(__name__)
+    app = Flask(__name__, static_folder='static', template_folder='templates')
 
     uri = os.environ.get('URI')
     if not uri:
@@ -29,6 +29,8 @@ def create_app(config_name="default"):
     # Flask app config variables
     app.config['MONGO_CLIENT'] = mongo_client
     app.config['DB'] = mongo_client['study-guide']
+
+    app.config['EXPLAIN_TEMPLATE_LOADING'] = True
 
     app.register_blueprint(main_bp)
     app.register_blueprint(user_bp)
