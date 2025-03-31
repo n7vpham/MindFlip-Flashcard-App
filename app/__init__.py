@@ -13,7 +13,7 @@ load_dotenv()
 # update <username> and <password> with your credentials from mongo
 
 def create_app(config_name="default"):
-    app = Flask(__name__, template_folder='../../templates')
+    app = Flask(__name__)
 
     uri = os.environ.get('URI')
     if not uri:
