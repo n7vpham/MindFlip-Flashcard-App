@@ -28,7 +28,7 @@
         <div class="topnav">
             {# <!-- To redirect, reference the name of the view function, with the name of the blueprint prepended --> #}
             <a href="{{ url_for('main.show') }}">Home</a>
-            <a href="login.html">Log In</a>
+            <a href="{{ url_for('main.show', page='login') }}">Log In</a>
         </div>
         {% endblock %}
     </div>
