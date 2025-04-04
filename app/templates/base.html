@@ -1,0 +1,46 @@
+{#
+    <!--
+    This is the parent template for use in every other template we create. At the top of each child template, 
+    include {% extends "base.html" %} and flask will provide this skeleton automatically. Include each block 
+    created here in your child template to add content.
+
+    Content inside of blocks seen here, such as the nav bar, are defaults that can and should be included in 
+    each child template.
+
+    Add {{ super() }} in each block of a child template to include the default content from base.
+    -->
+#}
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% block head %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock %} - MindFlip</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    {% endblock %}
+</head>
+<body>
+    <div id="header">
+        {% block nav %}
+        <div class="topnav">
+            {# <!-- To redirect, reference the name of the view function, with the name of the blueprint prepended --> #}
+            <a href="{{ url_for('main.show') }}">Home</a>
+            <a href="{{ url_for('main.show', page='login') }}">Log In</a>
+        </div>
+        {% endblock %}
+    </div>
+
+    <div id="content">
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    <div id="footer">
+        {% block footer %}
+        {% endblock %}
+    </div>
+</body>
+</html>
