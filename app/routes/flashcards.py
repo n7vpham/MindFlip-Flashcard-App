@@ -4,7 +4,7 @@ import pymongo
 import pymongo.errors
 from ..models.schema import flashcardsSchema
 from ..models.user import get_user_by_id
-from ..models.flashcards import create_flashcard_set, save_set_to_flashcard_collection, save_set_for_user, get_set
+from ..models.flashcards import create_flashcard_set, save_set_to_flashcard_collection, save_set_for_user, get_set, delete_set_from_flashcard_collection, delete_flashcard_for_user
 
 
 flashcard_bp = Blueprint("flashcards", __name__)
@@ -102,8 +102,8 @@ def create_and_save_flashcards_for_user_route(user_id):
 
 
 # TODO: Create a delete flashcards route
-# Needs to be delete it from the flashcard collection as well as the user's flashcards field.
-# Better error handlin
+# Needs delete it from the flashcard collection as well as the user's flashcards field.
+# Better error handling
 @flashcard_bp.route('/flashcards/<setID>', methods=['DELETE'])
 def delete_user_flashcard(user_id, setID):
     try:
@@ -113,4 +113,11 @@ def delete_user_flashcard(user_id, setID):
         
     except pymongo.errors.PyMongoError:
         return jsonify({"error": "No user exists with that ID or Database error"}, 404)
+    
+    # Need to verify that the user has permission to delete this set
+    # Delete the set from the flashcard collection using the setID
+    # Delete the set from the "flashcards" object by it's setID
+    deleted_from_collection = delete_set_from_flashcard_collection()
+
+
     

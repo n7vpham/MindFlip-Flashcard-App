@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flash-Cash</title>
+    <style>
+        /* Style the navigation bar background */
+        .topnav {
+            background-color: #1A6E1A; /* Darker Forest Green */
+            overflow: hidden;
+        }
+        
+        /* Style the links inside the navigation bar */
+        .topnav a {
+            float: left;
+            display: block;
+            color: #FFFFFF; /* White */
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+        }
+        
+        /* Change the color of links on hover */
+        .topnav a:hover {
+            background-color: #006666; /* Slightly darker Teal */
+            color: #FFFFFF; /* White */
+        }
+        
+        /* Add an active class to highlight the current page */
+        .active {
+            background-color: #004B00; /* Darker Dark Green */
+            color: #FFFFFF; /* White */
+        }
+        
+        /* Hide the link that should open and close the topnav on small screens */
+        .topnav .icon {
+            display: none;
+        }
+        
+        .welcome-page-title {
+            text-align: center;
+            font-size: 3em;
+            width: 300px; /* Restrict the width */
+            height: 100px;
+            margin: 0.67em auto; /* Center horizontally */
+            color: #1A6E1A; /* Darker Forest Green */
+            position: relative;
+            display: inline-bl ock;
+            padding: 20px;
+            background-color: #E6F4E6; /* Light Green matching the theme */
+            border-radius: 12px; /* Rounded corners */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+        }
+        
+        .welcome-page-title::before,
+        .welcome-page-title::after {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            width: 100%;
+            height: 100%;
+            background-color: #E6F4E6; /* Light Green matching the theme */
+            border-radius: 12px; /* Rounded corners */
+            z-index: -1;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+        }
+        
+        .welcome-page-title::before {
+            top: 20px;
+            left: 20px;
+        }
+        
+        .welcome-page-description {
+            text-align: center;
+            font-size: 1.5em;
+            margin: 0.67em auto;
+            color: #004B00; /* Darker Dark Green */
+            background-color: #E6F4E6; /* Light Green matching the theme */
+            padding: 10px;
+            max-width: 60%; /* Restrict the width */
+            border-radius: 8px; /* Optional: Add rounded corners */
+        }
+        
+        .welcome-btn {
+            text-align: center;
+            background-color: #1A6E1A; /* Darker Forest Green */
+            color: #FFFFFF; /* White */
+            padding: 14px 20px;
+            margin: 16px auto; /* Add margin between buttons and center them */
+            border: none;
+            cursor: pointer;
+            width: 200px; /* Force the buttons to be the same width */
+            font-size: 1.5em;
+            display: block; /* Ensure buttons are block-level for centering */
+        }
+        
+        .welcome-btn:hover {
+            background-color: #006666; /* Slightly darker Teal */
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="topnav">
+            <a href="index.html">Home</a>
+            <a href="login.html">Log In</a>
+        </div>
+    </header>
+
+    <main>
+        <h1 class="welcome-page-title">FLASH-CASH</h1>
+        <p class="welcome-page-description">Welcome to Flash-Cash! Flash-Cash is a 
+            simple-to-use flash card studying tool that allows you to make and edit your own 
+            study sets. Flash-Cash also gives you several methods to study your cards in the 
+            way that suits you best!</p>
+        <a class="welcome-btn" href="login.html">Log In</a>
+    </main>
+</body>
+
+</html>

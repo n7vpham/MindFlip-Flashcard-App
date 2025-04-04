@@ -3,7 +3,7 @@ from bson.objectid import ObjectId
 from flask import Blueprint, current_app, jsonify
 from ..models.schema import flashcardsSchema
 from marshmallow import ValidationError
-
+import pymongo
 
 def create_flashcard_set(json):
     db = current_app.config['DB']
@@ -22,7 +22,7 @@ def save_set_to_flashcard_collection(flashcards):
         set_id = collection.insert_one(flashcards).inserted_id
         set_id = str(set_id)
 
-        return set_id
+        return set_id, None
     except Exception as e:
         print(e)
         return None
@@ -37,8 +37,10 @@ def save_set_for_user(user, setID, setName):
                                        {"$set": {f"flashcards.{setID}": setName}})
         
         return result.modified_count > 0
-    except ValidationError as e:
-        return e.message
+    
+    except Exception as e:
+        print(e)
+        return None
         
 
 def save_flashcard(set_id, flashcard):
@@ -57,7 +59,7 @@ def get_set(set_id):
     try:
         study_set = collection.find_one({"_id": ObjectId(set_id)})
         study_set['_id'] = str(study_set['_id'])
-        
+
         return study_set
     except Exception as e:
         print(e)
@@ -99,7 +101,10 @@ def update_flashcard(set_id, flashcard_index, new_card):
         print(e)
         return False
 
-def delete_set(set_id):
+def delete_set_from_flashcard_collection(set_id):
+    db = current_app.config['DB']
+    collection = db['flashcards']
+    
     try:
         result = collection.delete_one({"_id": ObjectId(set_id)})
         return result.deleted_count > 0
@@ -108,7 +113,10 @@ def delete_set(set_id):
         return False
 
 # Technically an update function on a study set. $unset aggregation
-def delete_flashcard(set_id, flashcard_index):
+def delete_flashcard_for_user(set_id, flashcard_index):
+    db = current_app.config['DB']
+    collection = db['flashcards']
+
     try:
         result = collection.update_one({"_id": ObjectId(set_id)}, {"$unset": {f"flashcard.{flashcard_index}": 1}})
         return result.modified_count > 0
