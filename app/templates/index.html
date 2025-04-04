@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Welcome{% endblock %}
+
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
+{% endblock %}
+
+{% block nav %}
+    {{ super() }}
+{% endblock %}
+
+{% block content %}
+    <h1 class="welcome-page-title">FLASH-CASH</h1>
+    <p class="welcome-page-description">
+        Welcome to Flash-Cash! Flash-Cash is a simple-to-use flash card studying tool that allows 
+        you to make and edit your own study sets. Flash-Cash also gives you several methods to 
+        study your cards in the way that suits you best!
+    </p>
+    <a class="welcome-btn" href="{{ url_for('main.show', page='login') }}">Log In</a>
+{% endblock %}
+
+{% block footer %}
+    {{ super() }}
+{% endblock %}
