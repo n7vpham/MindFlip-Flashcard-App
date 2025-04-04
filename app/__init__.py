@@ -5,6 +5,7 @@ from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 from .routes import main_bp
 from .routes.users import user_bp
+from .routes.flashcards import flashcard_bp
 
 load_dotenv()
 
@@ -34,5 +35,6 @@ def create_app(config_name="default"):
 
     app.register_blueprint(main_bp)
     app.register_blueprint(user_bp)
+    app.register_blueprint(flashcard_bp)
 
     return app
