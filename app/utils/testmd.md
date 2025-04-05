@@ -1,11 +1,13 @@
 # This is a test
 
 Test def
-: Lest see how this looks
+: Lets see how this looks
 
-Yes yes
-: we shall see how this appears
+Another one
+: does this work?
 - aa
 - aa
+
+SOme block we do not want to see as a flashcard.
 
 how does the string appear.
