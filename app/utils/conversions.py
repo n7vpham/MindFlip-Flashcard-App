@@ -8,7 +8,7 @@ class FileConvert:
             for line in file:
                 if re.search("^:", line):
                     front = prevLine
-                    back = line
+                    back = line[1:].lstrip()
                     for next_line in file:
                         prevLine = next_line
                         if next_line.strip() == "":
