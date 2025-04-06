@@ -8,6 +8,7 @@ blinker==1.9.0
 certifi==2025.1.31
 charset-normalizer==3.4.1
 click==8.1.8
+colorama==0.4.6
 decorator==5.2.1
 defusedxml==0.7.1
 dnspython==2.7.0
@@ -16,6 +17,7 @@ dotenv==0.9.9
 executing==2.2.0
 fastjsonschema==2.21.1
 Flask==3.1.0
+Flask-Login==0.6.3
 idna==3.10
 ipython==8.12.3
 itsdangerous==2.2.0
@@ -39,7 +41,7 @@ pandocfilters==1.5.1
 parso==0.8.4
 pexpect==4.9.0
 pickleshare==0.7.5
-pipreqs
+pipreqs==0.5.0
 platformdirs==4.3.6
 prompt_toolkit==3.0.50
 ptyprocess==0.7.0
@@ -48,6 +50,7 @@ Pygments==2.19.1
 pymongo==4.11.2
 python-dateutil==2.9.0.post0
 python-dotenv==1.1.0
+pywin32==310
 pyzmq==26.3.0
 referencing==0.36.2
 requests==2.32.3
