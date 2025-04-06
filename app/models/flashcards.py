@@ -1,20 +1,51 @@
 from bson import json_util
 from bson.objectid import ObjectId
 from flask import Blueprint, current_app, jsonify
+from ..models.schema import flashcardsSchema
+from marshmallow import ValidationError
+import pymongo
 
-db = current_app.config['DB']
-collection = db['flashcards']
+def create_flashcard_set(json):
+    db = current_app.config['DB']
+    collection = db['flashcards']
 
-def save_set(json):
+    flashcard_schema = flashcardsSchema()
+    validated_flashcards = flashcard_schema.load(json)
+
+    return validated_flashcards
+
+
+def save_set_to_flashcard_collection(flashcards):
+    db = current_app.config['DB']
+    collection = db['flashcards']
     try:
-        study_set = json_util.loads(json)
-        set_id = collection.insert_one(study_set)
-        return set_id 
+        set_id = collection.insert_one(flashcards).inserted_id
+        set_id = str(set_id)
+
+        return set_id, None
     except Exception as e:
         print(e)
         return None
 
+
+# TODO: Make sure to add better error handling for the above 2 methods as well.
+def save_set_for_user(user, setID, setName):
+    db = current_app.config['DB']
+    collection = db['users']
+    try:
+        result = collection.update_one({"_id": ObjectId(user['_id'])}, 
+                                       {"$set": {f"flashcards.{setID}": setName}})
+        
+        return result.modified_count > 0
+    
+    except Exception as e:
+        print(e)
+        return None
+        
+
 def save_flashcard(set_id, flashcard):
+    db = current_app.config['DB']
+    collection = db['users']
     try:
         result = collection.update_one({"_id": ObjectId(set_id)}, {"$push": {"flashcards": flashcard}})
         return result.modified_count > 0
@@ -23,8 +54,12 @@ def save_flashcard(set_id, flashcard):
         return None
 
 def get_set(set_id):
+    db = current_app.config['DB']
+    collection = db['flashcards']
     try:
         study_set = collection.find_one({"_id": ObjectId(set_id)})
+        study_set['_id'] = str(study_set['_id'])
+
         return study_set
     except Exception as e:
         print(e)
@@ -66,7 +101,10 @@ def update_flashcard(set_id, flashcard_index, new_card):
         print(e)
         return False
 
-def delete_set(set_id):
+def delete_set_from_flashcard_collection(set_id):
+    db = current_app.config['DB']
+    collection = db['flashcards']
+    
     try:
         result = collection.delete_one({"_id": ObjectId(set_id)})
         return result.deleted_count > 0
@@ -75,37 +113,13 @@ def delete_set(set_id):
         return False
 
 # Technically an update function on a study set. $unset aggregation
-def delete_flashcard(set_id, flashcard_index):
+def delete_flashcard_for_user(set_id, flashcard_index):
+    db = current_app.config['DB']
+    collection = db['flashcards']
+
     try:
         result = collection.update_one({"_id": ObjectId(set_id)}, {"$unset": {f"flashcard.{flashcard_index}": 1}})
         return result.modified_count > 0
     except Exception as e:
         print(e)
         return False
-
-
-# flashcards_schema = {
-#     "validator": {
-#         "$jsonSchema": {
-#             "bsonType": "object",
-#             "required": ["setID", "setName", "setDescription", "timeStamp", "terms"],
-#             "properties": {
-#                 "setID": {"bsonType": "string"},
-#                 "setName": {"bsonType": "string"},
-#                 "setDescription": {"bsonType": "string"},
-#                 "timeStamp": {"bsonType": "date"},
-#                 "terms": {
-#                     "bsonType": "array",
-#                     "items": {
-#                         "bsonType": "object",
-#                         "required": ["term", "definition"],
-#                         "properties": {
-#                             "term": {"bsonType": "string"},
-#                             "definition": {"bsonType": "string"}
-#                         }
-#                     }
-#                }
-#            }
-#         }
-#     }
-# }
