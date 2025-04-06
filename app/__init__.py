@@ -1,4 +1,5 @@
 from flask import Flask
+from flask_login import LoginManager
 from dotenv import load_dotenv
 import os
 from pymongo.mongo_client import MongoClient
@@ -32,6 +33,9 @@ def create_app(config_name="default"):
     app.config['DB'] = mongo_client['study-guide']
 
     app.config['EXPLAIN_TEMPLATE_LOADING'] = True
+
+    # Session secret key
+    app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 
     app.register_blueprint(main_bp)
     app.register_blueprint(user_bp)
