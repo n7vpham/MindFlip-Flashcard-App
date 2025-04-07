@@ -27,10 +27,12 @@ def create_app(config_name="default"):
     except Exception as e:
         print(e)
 
+    # Choose DB based on config
+    db_name = 'study-guide-test' if config_name == 'testing' else 'study-guide'
+
     # Flask app config variables
     app.config['MONGO_CLIENT'] = mongo_client
-    app.config['DB'] = mongo_client['study-guide']
-
+    app.config['DB'] = mongo_client[db_name]
     app.config['EXPLAIN_TEMPLATE_LOADING'] = True
 
     app.register_blueprint(main_bp)
