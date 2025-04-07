@@ -7,16 +7,16 @@ from .routes import main_bp
 from .routes.users import user_bp
 from .routes.flashcards import flashcard_bp
 
-load_dotenv()
 
 # Add URI=mongodb+srv://<username>:<password>@fsb-cluster.7u2uh.mongodb.net/?retryWrites=true&w=majority&appName=fsb-cluster
 # to the .env file
 # update <username> and <password> with your credentials from mongo
 
 def create_app(config_name="default"):
+    load_dotenv()
     app = Flask(__name__, static_folder='static', template_folder='templates')
 
-    uri = os.environ.get('URI')
+    uri = os.getenv('URI')
     if not uri:
         raise ValueError("MongoDB URI wasn't found in environment variables")
     
