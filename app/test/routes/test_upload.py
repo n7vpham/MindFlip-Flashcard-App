@@ -20,6 +20,8 @@ def test_upload(client):
             },
         )
 
-    print(response.data)
+    print(response.json)
     assert response.status_code == 200
+
+    #TODO test that the set is successfully uploaded into the db
     

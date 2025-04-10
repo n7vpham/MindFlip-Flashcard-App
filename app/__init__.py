@@ -34,7 +34,7 @@ def create_app(config_name="default"):
     # Flask app config variables
     app.config['MONGO_CLIENT'] = mongo_client
     app.config['DB'] = mongo_client[db_name]
-    app.config['EXPLAIN_TEMPLATE_LOADING'] = True
+    # app.config['EXPLAIN_TEMPLATE_LOADING'] = True
 
     # Session secret key
     app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
