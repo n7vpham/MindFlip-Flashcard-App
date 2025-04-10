@@ -1,3 +1,4 @@
+from io import StringIO
 from flask import Blueprint, current_app, jsonify, request
 from bson.objectid import ObjectId
 import pymongo
@@ -5,7 +6,7 @@ import pymongo.errors
 from ..models.schema import flashcardsSchema
 from ..models.user import get_user_by_id
 from ..models.flashcards import create_flashcard_set, save_set_to_flashcard_collection, save_set_for_user, get_set, delete_set_from_flashcard_collection, delete_flashcard_for_user
-from app.utils import FileConvert
+from app.utils.conversions import FileConvert
 
 
 flashcard_bp = Blueprint("flashcards", __name__)
@@ -126,18 +127,21 @@ def delete_user_flashcard(user_id, set_id):
 
 
 # Request object should contain set info along with the file to be converted.
-@flashcard_bp.route('/flascards/upload', methods=['POST'])
-def upload_flashcard(user_id):
+@flashcard_bp.route('/flashcards/upload', methods=['POST'])
+def upload_flashcard():
     # Verify that the user is logged in, once thats possible
 
     # Get the user
+
+    """
     try:
-        user = get_user_by_id(user_id)
+        user = get_user_by_id(session['user_id'])
         if not user:
             return jsonify({"error": "User is none"}, 404)
         
     except pymongo.errors.PyMongoError:
         return jsonify({"error": "No user exists with that ID or Database error"}, 404)
+    """
 
     flashcards = []
 
@@ -146,18 +150,22 @@ def upload_flashcard(user_id):
         return jsonify({"error": "No file Selected"}, 400)
     
     mimetype = file.mimetype
+    read_file = file.read().decode('UTF-8') # Decode to a string
+    file_like_object = StringIO(read_file)
 
     try:
-        flashcards = convert_file(file, mimetype)
+        flashcards = FileConvert.handle_file(file, mimetype)
         
     except ValueError as ve:
         print(ve)
-        return jsonify({"error": "Unsupported file type}), 400)
+        return jsonify({"error": "Unsupported file type"}, 400)
     except Exception as e:
         print(e)
-        return jsonify({"error": "Server error while handling file}), 500)
+        return jsonify({"error": f"Server error while handling file, {str(e)}"}, 500)
         
+    return request.json
  
+    """
     # Create the set for the user
     flashcards = create_flashcard_set(request.json)
     setName = flashcards['setName']
@@ -172,4 +180,5 @@ def upload_flashcard(user_id):
         return jsonify({"Error": "Error: Couldn't save flashcards for user"}, 400)
 
     return {"Message": "Successfully saved flashcards for user"}, 200
+    """
     

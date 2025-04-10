@@ -9,8 +9,16 @@ class UserSchema(Schema):
     flashcards = fields.Dict(required=False, keys=fields.Str() , values=fields.Str(), load_default={}) # Key: Set ID, Value: Set Name
 
 
+class flashcardSchema(Schema):
+    front = fields.String(required=True, allow_none=False)
+    back = fields.String(required=True, allow_none=False)
+
 class flashcardsSchema(Schema):
     setName = fields.String(required=True, validate=validate.Length(1, 20), allow_none=False)
     timeStamp = fields.Time(required=False)
     setDescription = fields.String(required=True, validate=validate.Length(min=10), allow_none=False)
-    terms = fields.Dict(required=True, keys=fields.Str(), values=fields.Str())
+    # terms = fields.Dict(required=True, keys=fields.Str(), values=fields.Str())
+    terms = fields.List(fields.Nested(flashcardSchema))
+
+
+
