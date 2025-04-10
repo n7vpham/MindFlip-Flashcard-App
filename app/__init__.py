@@ -36,6 +36,12 @@ def create_app(config_name="default"):
     app.config['DB'] = mongo_client[db_name]
     # app.config['EXPLAIN_TEMPLATE_LOADING'] = True
 
+    # set TESTING based on the config_name
+    if config_name == 'testing':
+        app.config['TESTING'] = True
+    else:
+        app.config['TESTING'] = False
+
     # Session secret key
     app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 

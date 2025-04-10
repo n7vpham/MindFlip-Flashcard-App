@@ -126,38 +126,42 @@ def delete_user_flashcard(user_id, set_id):
     return jsonify({"Message": "Successfully deleted flashcards from flashcard collection and user field"}), 200
 
 
-# Request object should contain set info along with the file to be converted.
+
 @flashcard_bp.route('/flashcards/upload', methods=['GET', 'POST'])
-def upload_flashcard():
-    if request.method == "GET":
-        return render_template('testupload.html')
-
-
-    # Verify that the user is logged in, once thats possible
-
-    # Get the user
-
+def upload_flashcards():
+    """ Route for user to upload their file to be converted into a study set.
     
-    try:
-        user = get_user_by_id(session['user_id'])
-        if not user:
-            return jsonify({"error": "User is none"}, 404)
-        
-    except pymongo.errors.PyMongoError:
-        return jsonify({"error": "No user exists with that ID or Database error"}, 404)
+    GET: renders the upload page.
+    POST: converts a given file to flashcards and inserts a set to the users database.
+
+    The template form should send:
+    setName: name of the set
+    setDescription: description of the set
+    file: the file to be converted into flashcards
+
+    see templates/test/test_upload.html for an example
+
+    currently accepted file types: md
+    """
+
+    # A get request to the same url should render the page to upload the set
+    if request.method == "GET":
+        return render_template('test/test_upload.html')
+
+    #TODO: set up sessions so that the set can be saved for a user
 
     flashcards = []
 
     file = request.files['file']
     if file == '':
-        return jsonify({"error": "No file Selected"}, 400)
+        return jsonify({"error": "No file Selected"}), 400
     
     # Setting mimetype this way because file.mimetype does not like md files
     filename = file.filename
     if filename.endswith('.md'):
         mimetype = 'text/markdown'
     else:
-        return jsonify({"error": "Unsupported file type, expected .md file!"}, 415)
+        return jsonify({"error": "Unsupported file type, expected .md file!"}), 415
     
     read_file = file.read().decode('UTF-8') # Decode to a string
     file_like_object = StringIO(read_file)
@@ -166,12 +170,10 @@ def upload_flashcard():
         flashcards = FileConvert.handle_file(file_like_object, mimetype)
     except ValueError as ve:
         print(ve)
-        return jsonify({"error": "Unsupported file type"}, 400)
+        return jsonify({"error": "Unsupported file type"}), 400
     except Exception as e:
         print(e)
-        return jsonify({"error": f"Server error while handling file, {str(e)}"}, 500)
-        
-    print(flashcards)
+        return jsonify({"error": f"Server error while handling file, {str(e)}"}), 500
         
     # Construct the set to be uploaded
     set_name = request.form['setName']
@@ -182,19 +184,21 @@ def upload_flashcard():
         "terms": flashcards,
     }
 
-    print(flash_set)
+    # Only saving to test db while user auth is not included
+    if current_app.config['TESTING']:
+        set_id = save_set_to_flashcard_collection(flash_set)
+        if set_id is None:
+            return jsonify({"error": "Error saving the flashcard set to db"}), 500
+        return jsonify({"id": set_id}), 201
 
-    # return jsonify(flash_set, 200)
+    #TODO: Once user auth is figured for session, set up set save funcionality 
+    # isSaved = save_set_for_user(user, set_id, set_name)
 
+    # if not isSaved:
+    #     return jsonify({"Error": "Error: Couldn't save flashcards for user"}, 400)
 
-    # Returns set id to save into users study set 
-    set_id = save_set_to_flashcard_collection(flash_set)
-
-    # Save the set for the user
-    isSaved = save_set_for_user(user, set_id, set_name)
-
-    if not isSaved:
-        return jsonify({"Error": "Error: Couldn't save flashcards for user"}, 400)
-
-    return {"Message": "Successfully saved flashcards for user"}, 200
+    # return {"Message": "Successfully saved flashcards for user"}, 200
+    
+    # Change to code 201 when the set actually gets pushed to db
+    return jsonify(flash_set), 200
     
