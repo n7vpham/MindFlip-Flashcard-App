@@ -5,6 +5,7 @@ import pymongo.errors
 from ..models.schema import flashcardsSchema
 from ..models.user import get_user_by_id
 from ..models.flashcards import create_flashcard_set, save_set_to_flashcard_collection, save_set_for_user, get_set, delete_set_from_flashcard_collection, delete_flashcard_for_user
+from app.utils import FileConvert
 
 
 flashcard_bp = Blueprint("flashcards", __name__)
@@ -124,4 +125,51 @@ def delete_user_flashcard(user_id, set_id):
     return jsonify({"Message": "Successfully deleted flashcards from flashcard collection and user field"}), 200
 
 
+# Request object should contain set info along with the file to be converted.
+@flashcard_bp.route('/flascards/upload', methods=['POST'])
+def upload_flashcard(user_id):
+    # Verify that the user is logged in, once thats possible
+
+    # Get the user
+    try:
+        user = get_user_by_id(user_id)
+        if not user:
+            return jsonify({"error": "User is none"}, 404)
+        
+    except pymongo.errors.PyMongoError:
+        return jsonify({"error": "No user exists with that ID or Database error"}, 404)
+
+    flashcards = []
+
+    file = request.files['file']
+    if file == '':
+        return jsonify({"error": "No file Selected"}, 400)
+    
+    mimetype = file.mimetype
+
+    try:
+        flashcards = convert_file(file, mimetype)
+        
+    except ValueError as ve:
+        print(ve)
+        return jsonify({"error": "Unsupported file type}), 400)
+    except Exception as e:
+        print(e)
+        return jsonify({"error": "Server error while handling file}), 500)
+        
+ 
+    # Create the set for the user
+    flashcards = create_flashcard_set(request.json)
+    setName = flashcards['setName']
+
+    # Returns set id to save into users study set 
+    set_id = save_set_to_flashcard_collection(flashcards)
+
+    # Save the set for the user
+    isSaved = save_set_for_user(user, set_id, setName)
+
+    if not isSaved:
+        return jsonify({"Error": "Error: Couldn't save flashcards for user"}, 400)
+
+    return {"Message": "Successfully saved flashcards for user"}, 200
     

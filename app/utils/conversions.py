@@ -1,7 +1,29 @@
 import re
 
 class FileConvert:
-    def md_to_flashcard_list(md_file):
+    
+    # This way of handling files allows us to add other filetypes in the future
+    @classmethod
+    def handle_file(file, mimetype):
+        """
+        Args:
+            file (string): The filepath of the file to convert
+            mimetype: The file type
+        Returns:
+            list: a list of json like objects
+        """
+        conversions = {
+            'text/markdown': convert_markdown,
+            'text/x-markdown': convert_markdown,
+        }
+
+        converter = conversions.get(mimetype)
+        if not converter:
+            raise ValueError(f"Unsupported file type: {mimetype}")
+        return converter(file)
+
+    @classmethod
+    def convert_markdown(md_file):
         """Takes a markdown and and converts certain blocks into flashcards.
         Example of flashcard syntax in markdown:
 
@@ -36,8 +58,6 @@ class FileConvert:
                     prev_line = line
         
         return flashcard_list
-                    
-
-
+   
 if __name__ == '__main__':
     print(FileConvert.md_to_flashcard_list('testmd.md'))
