@@ -1,11 +1,14 @@
+import os
+from dotenv import load_dotenv
 import pytest
 from app import create_app
 
-
 @pytest.fixture
 def client():
+    load_dotenv()
     app = create_app(config_name='testing')
     app.config['TESTING'] = True
+    app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
     with app.test_client() as client:
         yield client
 

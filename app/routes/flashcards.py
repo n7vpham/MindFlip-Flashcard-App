@@ -1,10 +1,12 @@
-from flask import Blueprint, current_app, jsonify, request
+from io import StringIO
+from flask import Blueprint, current_app, jsonify, request, render_template, session
 from bson.objectid import ObjectId
 import pymongo
 import pymongo.errors
 from ..models.schema import flashcardsSchema
 from ..models.user import get_user_by_id
 from ..models.flashcards import create_flashcard_set, save_set_to_flashcard_collection, save_set_for_user, get_set, delete_set_from_flashcard_collection, delete_flashcard_for_user
+from app.utils.conversions import FileConvert
 
 
 flashcard_bp = Blueprint("flashcards", __name__)
@@ -124,4 +126,79 @@ def delete_user_flashcard(user_id, set_id):
     return jsonify({"Message": "Successfully deleted flashcards from flashcard collection and user field"}), 200
 
 
+
+@flashcard_bp.route('/flashcards/upload', methods=['GET', 'POST'])
+def upload_flashcards():
+    """ Route for user to upload their file to be converted into a study set.
+    
+    GET: renders the upload page.
+    POST: converts a given file to flashcards and inserts a set to the users database.
+
+    The template form should send:
+    setName: name of the set
+    setDescription: description of the set
+    file: the file to be converted into flashcards
+
+    see templates/test/test_upload.html for an example
+
+    currently accepted file types: md
+    """
+
+    # A get request to the same url should render the page to upload the set
+    if request.method == "GET":
+        return render_template('test/test_upload.html')
+
+    #TODO: set up sessions so that the set can be saved for a user
+
+    flashcards = []
+
+    file = request.files['file']
+    if file == '':
+        return jsonify({"error": "No file Selected"}), 400
+    
+    # Setting mimetype this way because file.mimetype does not like md files
+    filename = file.filename
+    if filename.endswith('.md'):
+        mimetype = 'text/markdown'
+    else:
+        return jsonify({"error": "Unsupported file type, expected .md file!"}), 415
+    
+    read_file = file.read().decode('UTF-8') # Decode to a string
+    file_like_object = StringIO(read_file)
+
+    try:
+        flashcards = FileConvert.handle_file(file_like_object, mimetype)
+    except ValueError as ve:
+        print(ve)
+        return jsonify({"error": "Unsupported file type"}), 400
+    except Exception as e:
+        print(e)
+        return jsonify({"error": f"Server error while handling file, {str(e)}"}), 500
+        
+    # Construct the set to be uploaded
+    set_name = request.form['setName']
+    set_description = request.form['setDescription']
+    flash_set = {
+        "setName": set_name,
+        "setDescription": set_description,
+        "terms": flashcards,
+    }
+
+    # Only saving to test db while user auth is not included
+    if current_app.config['TESTING']:
+        set_id = save_set_to_flashcard_collection(flash_set)
+        if set_id is None:
+            return jsonify({"error": "Error saving the flashcard set to db"}), 500
+        return jsonify({"id": set_id}), 201
+
+    #TODO: Once user auth is figured for session, set up set save funcionality 
+    # isSaved = save_set_for_user(user, set_id, set_name)
+
+    # if not isSaved:
+    #     return jsonify({"Error": "Error: Couldn't save flashcards for user"}, 400)
+
+    # return {"Message": "Successfully saved flashcards for user"}, 200
+    
+    # Change to code 201 when the set actually gets pushed to db
+    return jsonify(flash_set), 200
     
