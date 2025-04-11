@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}Welcome{% endblock %}
+
+{% block head %}
+    {{ super() }}
+    <link href="{{ url_for('static', filename='create.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block nav %}
+    {{ super() }}
+{% endblock %}
+
+{% block content %}
+    <h1>Create New Study Set</h1>
+    <!-- Upload file form restricted to txt or document format-->
+    <p>Upload a file to create a new set:</p>
+    <form method="post" enctype="multipart/form-data" action="/flashcards">
+        <input type="file" name="file" accept=".txt, .doc, .docx" required>
+        <button type="submit">Upload</button>
+    </form>
+    <p>Or create a new set manually:</p>
+    <!-- Form to create a new set manually with a name and description, and add terms dynamically-->
+    <form method="post" action="/flashcards">
+        <p>Set Name:</p>
+        <input type="name" name="name" placeholder="Set Name" required>
+        <p>Set Description:</p>
+        <textarea name="description" placeholder="Set Description" maxlength="500"></textarea>
+        <!-- Add term to manual set and display it in list with a "Clear Term" button next to each term-->
+        <p>Terms:</p>
+        <input type="text" name="term" placeholder="Term">
+        <input type="text" name="definition" placeholder="Definition">
+        <button type="button" onclick="addTerm()">Add Term</button>
+        <ul id="term-list">
+            <!-- Terms will be added here dynamically -->
+            {% for term in terms %}
+                <li id="term-{{ term.id }}-{{ loop.index }}">{{ term.name }}: {{ term.definition }} <button type="button" onclick="removeTerm('term-{{ term.id }}-{{ loop.index }}')">Clear Term</button></li>
+            {% endfor %}
+        </ul>
+        <button type="submit" class="primary-button">Create Set</button>
+    </form>
+{% endblock %}
+
+{% block footer %}
+    {{ super() }}
+    <script>
+        function addTerm() {
+            const termInput = document.querySelector('input[name="term"]');
+            const definitionInput = document.querySelector('input[name="definition"]');
+            const termList = document.getElementById('term-list');
+
+            if (termInput.value && definitionInput.value) {
+                const li = document.createElement('li');
+                li.textContent = `${termInput.value}: ${definitionInput.value}`;
+                const button = document.createElement('button');
+                button.textContent = 'Clear Term';
+                button.type = 'button';
+                button.onclick = function() {
+                    termList.removeChild(li);
+                };
+                li.appendChild(button);
+                termList.appendChild(li);
+
+                termInput.value = '';
+                definitionInput.value = '';
+            } else {
+                alert('Please fill in both a term and definition.');
+            }
+        }
+
+        function removeTerm(termId) {
+            const termElement = document.getElementById(`term-${termId}`);
+            if (termElement) {
+                termElement.remove();
+            }
+        }
+    </script>
+{% endblock %}
