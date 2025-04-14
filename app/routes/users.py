@@ -102,7 +102,6 @@ def del_user_by_id_route(user_id):
 # def update_user_by_id(user_id, updated_value):
 
 
-
 # POST /users/login
 # When a user clicks login in the login page, the request should include the email and password, that password is checked through a hash
 # and a session is created with the user id and the email
