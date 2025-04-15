@@ -1,4 +1,4 @@
-from flask import Blueprint, current_app, jsonify, request, session
+from flask import Blueprint, current_app, jsonify, request, session, render_template
 from bson.objectid import ObjectId
 import pymongo
 import pymongo.errors
@@ -10,7 +10,7 @@ from werkzeug.security import check_password_hash
 
 
 user_bp = Blueprint('users', __name__, url_prefix='/users')
-user_bp.register_blueprint(flashcard_bp, url_prefix='/<user_id>')
+user_bp.register_blueprint(flashcard_bp)#, url_prefix='/<user_id>')
 
 # You can test this out by doing curl http://127.0.0.1:5000/users, might not be the path we used in the end but it works for now
 # GET /users
@@ -34,11 +34,9 @@ def get_users_route():
 # POST /users
 # Creates a new user
 # Returns a success message if a new user was created
-
 # Need something that checks if email is already used to create account.
-
 @user_bp.route("/", methods=['POST'])
-def create_user_route():
+def create_user():
     try:
         validated_user = create_user(request.json)
     except ValidationError as err:
@@ -109,7 +107,7 @@ def del_user_by_id_route(user_id):
 def login_user():  
     logged_in = login_and_validate_user(request)
     if logged_in:
-        return jsonify({"Success": "You successfully logged in"}, 200)
+        return render_template("create.html")
     else:
         return jsonify({"error": "You were unable to login, please check email or password"}, 401)
     
