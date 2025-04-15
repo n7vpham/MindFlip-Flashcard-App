@@ -20,15 +20,18 @@
     </form>
     <p>Or create a new set manually:</p>
     <!-- Form to create a new set manually with a name and description, and add terms dynamically-->
-    <form method="post" action="/flashcards">
+    <form method="POST" action="{{ url_for('flashcards.create_and_save_flashcards_for_user_route') }}">
+
         <p>Set Name:</p>
-        <input type="name" name="name" placeholder="Set Name" required>
+        <input type="name" name="setName" placeholder="Set Name" required>
+
         <p>Set Description:</p>
-        <textarea name="description" placeholder="Set Description" maxlength="500"></textarea>
+        <textarea name="setDescription" placeholder="Set Description" maxlength="500"></textarea>
+
         <!-- Add term to manual set and display it in list with a "Clear Term" button next to each term-->
         <p>Terms:</p>
-        <input type="text" name="term" placeholder="Term">
-        <input type="text" name="definition" placeholder="Definition">
+        <input type="text" name="front" placeholder="front">
+        <input type="text" name="back" placeholder="back">
         <button type="button" onclick="addTerm()">Add Term</button>
         <ul id="term-list">
             <!-- Terms will be added here dynamically -->

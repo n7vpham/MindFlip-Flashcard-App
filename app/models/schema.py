@@ -15,11 +15,7 @@ class CardSchema(Schema):
 class flashcardsSchema(Schema):
     setName = fields.String(required=True, validate=validate.Length(1, 20), allow_none=False)
     timeStamp = fields.Time(required=False)
-    setDescription = fields.String(required=True, validate=validate.Length(min=10), allow_none=False)
-
-    # Updated the actual flashcards to be a nested list within the set schema
-    # I feel this allows some more options for dealing with the flashcards later on
-    # - Isaac
+    setDescription = fields.String(required=True, validate=validate.Length(min=8), allow_none=False)
     terms = fields.List(fields.Nested(CardSchema))
 
 
