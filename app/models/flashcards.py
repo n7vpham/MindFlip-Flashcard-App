@@ -5,12 +5,12 @@ from ..models.schema import flashcardsSchema
 from marshmallow import ValidationError
 import pymongo
 
-def create_flashcard_set(json):
+def create_flashcard_set(request):
     db = current_app.config['DB']
     collection = db['flashcards']
 
     flashcard_schema = flashcardsSchema()
-    validated_flashcards = flashcard_schema.load(json)
+    validated_flashcards = flashcard_schema.load(request)
 
     return validated_flashcards
 

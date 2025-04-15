@@ -109,7 +109,7 @@ def login_and_validate_user(request):
     collection = db['users']
 
     # The data should be the email and password in JSON
-    data = request.json
+    data = request.form
 
     user = collection.find_one({"email": data.get("email")})
 

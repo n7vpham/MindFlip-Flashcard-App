@@ -21,9 +21,9 @@
             <!-- Login Form -->
             <div class="login-form">
                 <h3>Login</h3>
-                <form>
-                    <input type="email" class="form-control" placeholder="Email" required>
-                    <input type="password" class="form-control" placeholder="Password" required>
+                <form method="POST" action="{{ url_for('users.login_user') }}">
+                    <input type="email" name="email" class="form-control" placeholder="Email" required>
+                    <input type="password" name= "password" class="form-control" placeholder="Password" required>
                     <button type="submit" class="btn btn-custom glow">Login</button>
                 </form>
                 <p>Don't have an account? <span class="toggle-text" onclick="showSignup()">Sign Up</span></p>

@@ -11,12 +11,12 @@ from app.utils.conversions import FileConvert
 
 flashcard_bp = Blueprint("flashcards", __name__)
 
-# GET /user/<user_id>/flashcards 
+# GET /user/flashcards 
 # Returns the users flashcards as a dictionary with keys = setID and values = setNames
 @flashcard_bp.route('/flashcards', methods=["GET"])
-def get_all_users_flashcards(user_id):
-
+def get_all_users_flashcards():
     # Verify that the user is logged in,
+    user_id = session.get('user_id')
     # Get the user
     try:
         user = get_user_by_id(user_id)
@@ -37,10 +37,12 @@ def get_all_users_flashcards(user_id):
     
     return jsonify(flashcards), 200
 
-# GET /users/<user_id>/flashcards/<setID>
+# GET /users/flashcards/<setID>
 # Returns a users specific flashcard set as requested with the setID in dictionary form
 @flashcard_bp.route('/flashcards/<set_id>', methods=["GET"])
-def get_specific_user_flashcards(user_id, set_id):
+def get_specific_user_flashcards(set_id):
+    user_id = session.get('user_id')
+
     try:
         user = get_user_by_id(user_id)
         if not user:
@@ -71,12 +73,12 @@ def get_specific_user_flashcards(user_id, set_id):
     # Returns the specific flashcard set in dictionary form
     return jsonify(requested_cards), 200
 
-# POST /users/<user_id>/flashcards
+# POST /users/flashcards
 # Creates a new set for the user based on the JSON request body and saves it to the users flashcard collection
 @flashcard_bp.route('/flashcards', methods=["POST"])
-def create_and_save_flashcards_for_user_route(user_id):
+def create_and_save_flashcards_for_user_route():
     # Verify that the user is logged in, once thats possible
-
+    user_id = session.get('user_id')
     # Get the user
     try:
         user = get_user_by_id(user_id)
@@ -87,7 +89,7 @@ def create_and_save_flashcards_for_user_route(user_id):
         return jsonify({"error": "No user exists with that ID or Database error"}, 404)
     
     # Create the set for the user
-    flashcards = create_flashcard_set(request.json)
+    flashcards = create_flashcard_set(request.form)
     setName = flashcards['setName']
 
     # Returns set id to save into users study set 
@@ -102,11 +104,13 @@ def create_and_save_flashcards_for_user_route(user_id):
     return {"Message": "Successfully saved flashcards for user"}, 200
 
 
-# DELETE /users/<user_id>/flashcards/<set_id>
+# DELETE /users/flashcards/<set_id>
 # Deletes a flashcard set from the flashcards collection in the database and the user's reference to that
 # set from their flashcards field 
 @flashcard_bp.route('/flashcards/<set_id>', methods=['DELETE'])
-def delete_user_flashcard(user_id, set_id):
+def delete_user_flashcard(set_id):
+    user_id = session.get('user_id')
+
     try:
         user = get_user_by_id(user_id)
         if not user:
