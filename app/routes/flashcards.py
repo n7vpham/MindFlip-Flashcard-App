@@ -26,30 +26,31 @@ def get_all_sets_route():
     return jsonify(sets), 200
     
 # GET /user/flashcards 
-# Returns the users flashcards as a dictionary with keys = setID and values = setNames
+# Returns the users flashcard sets
 @flashcard_bp.route('/flashcards', methods=["GET"])
-def get_all_users_flashcards():
-    # Verify that the user is logged in,
+def get_all_users_sets():
     user_id = session.get('user_id')
-    # Get the user
     try:
         user = get_user_by_id(user_id)
         if not user:
             return jsonify({"error": "User is none"}), 404
-        
     except pymongo.errors.PyMongoError:
         return jsonify({"error": "No user exists with that ID or Database error"}), 404
     
-    if "flashcards" not in user.keys():
-        return {"No flashcards to show": "0"}, 200
-
-    # Get the user's flashcards: This is a dictionary of key: setID, value: setName
+    # Returns: List of dictionaries --> {"set_id": "set_name"}
     flashcards = user['flashcards']
 
-    print(flashcards.keys())
-    print(flashcards.values())
-    
-    return jsonify(flashcards), 200
+    sets = []
+    for set_id in flashcards.keys():
+        try:
+            set = get_set(set_id)
+            sets.append(set)
+        # If an error occurs, user might be referencing a set that doesn't exist
+        except pymongo.errors.PyMongoError as err:
+            print(f"Error getting a set in get_all_users_sets(): {err}")
+            return jsonify({"error": "Internal server error"}), 500
+
+    return jsonify(sets), 200
 
 # GET /users/flashcards/<setID>
 # Returns a users specific flashcard set as requested with the setID in dictionary form
@@ -79,8 +80,9 @@ def get_specific_user_flashcards(set_id):
         requested_cards = get_set(set_id)
         if not requested_cards:
             return jsonify({"Error": "Flashcards not found"}), 404
-    except:
-        return {"Error": "Exception found "}, 500
+    except pymongo.errors.PyMongoError as err:
+        print("pymongo exception in get_specific_user_flashcards(): {err}")
+        return jsonify({"Error": "Internal server error"}), 500
     
     return jsonify(requested_cards), 200
 
@@ -121,11 +123,14 @@ def create_set_route():
             return jsonify({"Error": "Error: Couldn't save flashcards for user"}), 400
     except ValidationError as err:
         return jsonify({"error": err.messages}), 400
+    except pymongo.error.PyMongoError as err:
+        print(f"pymongo exception raised in create_set_route: {err}")
+        return jsonify({"error": "Internal server error"}), 500
     except Exception as err:
-        return jsonify({"error": str(err)}), 500
+        return jsonify({"error": "Internal server error"}), 500
 
     flash("Saved the set")
-    return redirect(url_for('flashcards.get_all_sets_route'))
+    return redirect(url_for('flashcards.get_all_users_sets'))
 
 # DELETE /users/flashcards/<set_id>
 # Deletes a flashcard set from the flashcards collection in the database and the user's reference to that
