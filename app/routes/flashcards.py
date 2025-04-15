@@ -94,6 +94,17 @@ def create_set_route():
     if request.method == "GET":
         return render_template('create.html')
 
+    # Verify that the user is logged in, once thats possible
+    user_id = session.get('user_id')
+    print(f"UserID: {user_id}")
+    # Get the user
+    try:
+        user = get_user_by_id(user_id)
+        if not user:
+            return jsonify({"error": "User is none"}, 404)
+    except pymongo.errors.PyMongoError:
+        return jsonify({"error": "No user exists with that ID or Database error"}, 404)
+
     # Parsing the form into set object. Could abstract this away later if need be.
     set_name = request.form['setName']
     set_description = request.form['setDescription']
@@ -115,6 +126,9 @@ def create_set_route():
         validated_set = validate_set(set)
         print(f"Validated set: {validate_set}")
         set_id = save_set_to_flashcard_collection(validated_set)
+        isSaved = save_set_for_user(user, set_id, validated_set['setName'])
+        if not isSaved:
+            return jsonify({"Error": "Error: Couldn't save flashcards for user"}), 400
     except ValidationError as err:
         return jsonify({"error": err.messages}), 400
     except Exception as err:
@@ -123,34 +137,6 @@ def create_set_route():
 
     flash("Saved the set")
     return redirect(url_for('flashcards.get_all_sets_route'))
-
-    '''
-    # Verify that the user is logged in, once thats possible
-    user_id = session.get('user_id')
-    # Get the user
-    try:
-        user = get_user_by_id(user_id)
-        if not user:
-            return jsonify({"error": "User is none"}, 404)
-        
-    except pymongo.errors.PyMongoError:
-        return jsonify({"error": "No user exists with that ID or Database error"}, 404)
-    
-    # Create the set for the user
-    flashcards = create_flashcard_set(request.form)
-    setName = flashcards['setName']
-
-    # Returns set id to save into users study set 
-    set_id = save_set_to_flashcard_collection(flashcards)
-
-    # Save the set for the user
-    isSaved = save_set_for_user(user, set_id, setName)
-
-    if not isSaved:
-        return jsonify({"Error": "Error: Couldn't save flashcards for user"}, 400)
-
-    return {"Message": "Successfully saved flashcards for user"}, 200
-    '''
 
 
 # DELETE /users/flashcards/<set_id>
