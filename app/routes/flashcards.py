@@ -1,16 +1,30 @@
 from io import StringIO
-from flask import Blueprint, current_app, jsonify, request, render_template, session
+
+from flask import Blueprint, current_app, jsonify, request, render_template, session, redirect, url_for, flash
 from bson.objectid import ObjectId
 import pymongo
 import pymongo.errors
+from marshmallow import ValidationError
+
 from ..models.schema import flashcardsSchema
 from ..models.user import get_user_by_id
-from ..models.flashcards import create_flashcard_set, save_set_to_flashcard_collection, save_set_for_user, get_set, delete_set_from_flashcard_collection, delete_flashcard_for_user
+from ..models.flashcards import validate_set, save_set_to_flashcard_collection, save_set_for_user, get_set, delete_set_from_flashcard_collection, delete_flashcard_for_user, get_all_sets
 from app.utils.conversions import FileConvert
 
 
 flashcard_bp = Blueprint("flashcards", __name__)
 
+# TEST route. Delete or modify if in production
+# GET /flashcards/all
+# Returns all flashcard sets in the db
+@flashcard_bp.route('/flashcards/all', methods=["GET"])
+def get_all_sets_route():
+    sets = get_all_sets()
+    for set in sets:
+        print(set)
+        set["_id"] = str(set["_id"])
+    return jsonify(sets), 200
+    
 # GET /user/flashcards 
 # Returns the users flashcards as a dictionary with keys = setID and values = setNames
 @flashcard_bp.route('/flashcards', methods=["GET"])
@@ -75,8 +89,42 @@ def get_specific_user_flashcards(set_id):
 
 # POST /users/flashcards
 # Creates a new set for the user based on the JSON request body and saves it to the users flashcard collection
-@flashcard_bp.route('/flashcards', methods=["POST"])
-def create_and_save_flashcards_for_user_route():
+@flashcard_bp.route('/create', methods=["POST", "GET"])
+def create_set_route():
+    if request.method == "GET":
+        return render_template('create.html')
+
+    # Parsing the form into set object. Could abstract this away later if need be.
+    set_name = request.form['setName']
+    set_description = request.form['setDescription']
+    fronts = request.form.getlist('front')
+    backs = request.form.getlist('back')
+
+    flashcards = [{"front": f, "back": b} for f, b in zip(fronts, backs)]
+    print(f"Flashcards type: {type(flashcards[0])}")
+
+    set = {
+        "setName": set_name,
+        "setDescription": set_description,
+        "terms": flashcards,
+    }
+    print(f"set before validation: {set}")
+    print(f"type: {type(set)}")
+
+    try:
+        validated_set = validate_set(set)
+        print(f"Validated set: {validate_set}")
+        set_id = save_set_to_flashcard_collection(validated_set)
+    except ValidationError as err:
+        return jsonify({"error": err.messages}), 400
+    except Exception as err:
+        return jsonify({"error": str(err)}), 500
+
+
+    flash("Saved the set")
+    return redirect(url_for('flashcards.get_all_sets_route'))
+
+    '''
     # Verify that the user is logged in, once thats possible
     user_id = session.get('user_id')
     # Get the user
@@ -102,6 +150,7 @@ def create_and_save_flashcards_for_user_route():
         return jsonify({"Error": "Error: Couldn't save flashcards for user"}, 400)
 
     return {"Message": "Successfully saved flashcards for user"}, 200
+    '''
 
 
 # DELETE /users/flashcards/<set_id>
