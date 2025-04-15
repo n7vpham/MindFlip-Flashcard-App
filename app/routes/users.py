@@ -1,4 +1,4 @@
-from flask import Blueprint, current_app, jsonify, request, session, render_template
+from flask import Blueprint, current_app, jsonify, request, session, render_template, flash, redirect, url_for
 from bson.objectid import ObjectId
 import pymongo
 import pymongo.errors
@@ -51,7 +51,8 @@ def create_user_route():
     except:
         return jsonify({"error": "Error: Unable to save user"}), 404
 
-    return jsonify({"Message":"Successfully created and saved user"}), 200
+    flash("Successfully created an account")
+    return redirect(url_for('main.show'))
 
 # GET /users/<user_id>
 # Returns a user based on their user_id in the form of a dictionary
