@@ -36,18 +36,20 @@ def get_users_route():
 # Returns a success message if a new user was created
 # Need something that checks if email is already used to create account.
 @user_bp.route("/", methods=['POST'])
-def create_user():
+def create_user_route():
+    # Construct user object with submitted form
+    user = request.form
     try:
-        validated_user = create_user(request.json)
+        validated_user = create_user(user)
     except ValidationError as err:
-        return jsonify({"error": err.messages}, 404)
+        return jsonify({"error": err.messages}), 404
     
     try:
         saved_user_id = save_user(validated_user)
         if not saved_user_id:
-            return jsonify({"error": "Error: Saving was unsuccessful"}, 400)
+            return jsonify({"error": "Error: Saving was unsuccessful"}), 400
     except:
-        return jsonify({"error": "Error: Unable to save user"}, 404)
+        return jsonify({"error": "Error: Unable to save user"}), 404
 
     return jsonify({"Message":"Successfully created and saved user"}), 200
 
