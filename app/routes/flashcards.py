@@ -35,10 +35,10 @@ def get_all_users_flashcards():
     try:
         user = get_user_by_id(user_id)
         if not user:
-            return jsonify({"error": "User is none"}, 404)
+            return jsonify({"error": "User is none"}), 404
         
     except pymongo.errors.PyMongoError:
-        return jsonify({"error": "No user exists with that ID or Database error"}, 404)
+        return jsonify({"error": "No user exists with that ID or Database error"}), 404
     
     if "flashcards" not in user.keys():
         return {"No flashcards to show": "0"}, 200
@@ -56,35 +56,32 @@ def get_all_users_flashcards():
 @flashcard_bp.route('/flashcards/<set_id>', methods=["GET"])
 def get_specific_user_flashcards(set_id):
     user_id = session.get('user_id')
-
     try:
         user = get_user_by_id(user_id)
         if not user:
-            return jsonify({"error": "User is none"}, 404)
-        
+            return jsonify({"error": "User is none"}), 404
     except pymongo.errors.PyMongoError:
-        return jsonify({"error": "No user exists with that ID or Database error"}, 404)
+        return jsonify({"error": "No user exists with that ID or Database error"}), 404
     
     if "flashcards" not in user.keys():
-        return {"No flashcards to show": "0"}, 200
+        flash("No flashcards for this user")
+        return redirect(url_for('flashcards.create_set_route'))
 
-    # Get the user's flashcards: This is a dictionary of key: setID, value: setName
+    # Returns: List of dictionaries --> {"set_id": "set_name"}
     flashcards = user['flashcards']
 
     # If the set ID isn't located in the user's flashcards, show an error
     if set_id not in flashcards.keys():
-        return jsonify({"Error": "You are not authorized to view this set or set doesn't exist"}, 404)
+        return jsonify({"Error": "You are not authorized to view this set or set doesn't exist"}), 404
     
     # Use the get_set method to locate the set in the flashcard collection in MongoDB, if not found returns None and thus an error
     try:
         requested_cards = get_set(set_id)
-        
         if not requested_cards:
-            return jsonify({"Error": "Flashcards not found"}, 404)
+            return jsonify({"Error": "Flashcards not found"}), 404
     except:
-        return {"Error": "Exception found "}, 404
+        return {"Error": "Exception found "}, 500
     
-    # Returns the specific flashcard set in dictionary form
     return jsonify(requested_cards), 200
 
 # POST /users/flashcards
@@ -94,16 +91,13 @@ def create_set_route():
     if request.method == "GET":
         return render_template('create.html')
 
-    # Verify that the user is logged in, once thats possible
     user_id = session.get('user_id')
-    print(f"UserID: {user_id}")
-    # Get the user
     try:
         user = get_user_by_id(user_id)
         if not user:
-            return jsonify({"error": "User is none"}, 404)
+            return jsonify({"error": "User is none"}), 404
     except pymongo.errors.PyMongoError:
-        return jsonify({"error": "No user exists with that ID or Database error"}, 404)
+        return jsonify({"error": "No user exists with that ID or Database error"}), 404
 
     # Parsing the form into set object. Could abstract this away later if need be.
     set_name = request.form['setName']
@@ -112,19 +106,15 @@ def create_set_route():
     backs = request.form.getlist('back')
 
     flashcards = [{"front": f, "back": b} for f, b in zip(fronts, backs)]
-    print(f"Flashcards type: {type(flashcards[0])}")
 
     set = {
         "setName": set_name,
         "setDescription": set_description,
         "terms": flashcards,
     }
-    print(f"set before validation: {set}")
-    print(f"type: {type(set)}")
 
     try:
         validated_set = validate_set(set)
-        print(f"Validated set: {validate_set}")
         set_id = save_set_to_flashcard_collection(validated_set)
         isSaved = save_set_for_user(user, set_id, validated_set['setName'])
         if not isSaved:
@@ -134,10 +124,8 @@ def create_set_route():
     except Exception as err:
         return jsonify({"error": str(err)}), 500
 
-
     flash("Saved the set")
     return redirect(url_for('flashcards.get_all_sets_route'))
-
 
 # DELETE /users/flashcards/<set_id>
 # Deletes a flashcard set from the flashcards collection in the database and the user's reference to that
@@ -149,18 +137,18 @@ def delete_user_flashcard(set_id):
     try:
         user = get_user_by_id(user_id)
         if not user:
-            return jsonify({"error": "User is none"}, 404)
+            return jsonify({"error": "User is none"}), 404
         
     except pymongo.errors.PyMongoError:
-        return jsonify({"error": "No user exists with that ID or Database error"}, 404)
+        return jsonify({"error": "No user exists with that ID or Database error"}), 404
     
     deleted_from_collection = delete_set_from_flashcard_collection(set_id)
     if not deleted_from_collection:
-        return jsonify({"error": "Flashcards couldn't be deleted from flashcards collection or don't exist"}, 404)
+        return jsonify({"error": "Flashcards couldn't be deleted from flashcards collection or don't exist"}), 404
     
     deleted_for_user = delete_flashcard_for_user(user_id, set_id)
     if not deleted_for_user:
-        return jsonify({"error": "Flashcards couldn't be deleted from user's flashcards field or don't exist"}, 404)
+        return jsonify({"error": "Flashcards couldn't be deleted from user's flashcards field or don't exist"}), 404
 
     return jsonify({"Message": "Successfully deleted flashcards from flashcard collection and user field"}), 200
 
