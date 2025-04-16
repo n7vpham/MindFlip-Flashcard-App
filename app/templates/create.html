@@ -20,7 +20,7 @@
     </form>
     <p>Or create a new set manually:</p>
     <!-- Form to create a new set manually with a name and description, and add terms dynamically-->
-    <form method="POST" action="{{ url_for('flashcards.create_and_save_flashcards_for_user_route') }}">
+    <form method="POST" action="{{ url_for('flashcards.create_set_route') }}">
 
         <p>Set Name:</p>
         <input type="name" name="setName" placeholder="Set Name" required>
