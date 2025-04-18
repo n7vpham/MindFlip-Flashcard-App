@@ -5,21 +5,23 @@ from ..models.schema import flashcardsSchema
 from marshmallow import ValidationError
 import pymongo
 
-def create_flashcard_set(json):
+def validate_set(set):
     db = current_app.config['DB']
     collection = db['flashcards']
 
     flashcard_schema = flashcardsSchema()
-    validated_flashcards = flashcard_schema.load(json)
+    validated_flashcards = flashcard_schema.load(set)
 
     return validated_flashcards
 
 
-def save_set_to_flashcard_collection(flashcards):
+def save_set_to_flashcard_collection(set):
     db = current_app.config['DB']
     collection = db['flashcards']
+
+    print(f"models -> set type: {type(set)}") 
     try:
-        set_id = collection.insert_one(flashcards).inserted_id
+        set_id = collection.insert_one(set).inserted_id
         set_id = str(set_id)
 
         return set_id
@@ -66,6 +68,8 @@ def get_set(set_id):
         return None
 
 def get_all_sets():
+    db = current_app.config['DB']
+    collection = db['flashcards']
     try:
         cursor = collection.find()
         return list(cursor)
