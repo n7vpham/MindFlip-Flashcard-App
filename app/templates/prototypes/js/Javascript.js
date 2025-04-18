@@ -67,8 +67,8 @@ function renderFlashcards(filteredCards = flashcards) {
         div.dataset.id = card.id;
         div.innerHTML = `
             <div class="flashcard-content">
-                <p><strong>Q:</strong> ${card.question}</p>
-                <p><strong>A:</strong> ${card.answer}</p>
+                <p><strong>Front:</strong> ${card.question}</p>
+                <p><strong>Back:</strong> ${card.answer}</p>
             </div>
             <div class="flashcard-actions">
                 <button class="btn-action" onclick="editFlashcard(${card.id})">Edit</button>
@@ -156,3 +156,131 @@ function showLogin() {
     const card = document.getElementById('card');
     card.classList.remove('signup');
 }
+function showQuestion() {
+    const card = document.getElementById('card');
+    card.classList.add('answer');
+}
+
+function showAnswer() {
+    const card = document.getElementById('card');
+    card.classList.remove('answer');
+}
+function addRow() {
+    const container = document.getElementById('bulkEntries');
+    const row = document.createElement('div');
+    row.className = 'bulk-entry-row row g-3 mb-3';
+    row.innerHTML = `
+        <div class="col-md-6">
+            <textarea class="form-control question-input" placeholder="Front" rows="3" required></textarea>
+        </div>
+        <div class="col-md-6">
+            <textarea class="form-control answer-input" placeholder="Back" rows="3" required></textarea>
+        </div>
+        <div class="col-md-+">
+            <button type="button" class="btn btn-delete w-100" onclick="removeRow(this)">Remove</button>
+        </div>
+    `;
+    container.appendChild(row);
+}
+
+function removeRow(button) {
+    const rows = document.querySelectorAll('.bulk-entry-row');
+    if (rows.length > 1) {
+        button.closest('.bulk-entry-row').remove();
+    } else {
+        alert('At least one row is required.');
+    }
+}
+function createBulkFlashcards() {
+    const inputs = document.querySelectorAll('.bulk-entry-row');
+    let validEntries = 0;
+    let newFlashcards = [];
+
+    inputs.forEach(row => {
+        const question = row.querySelector('.question-input').value.trim();
+        const answer = row.querySelector('.answer-input').value.trim();
+        if (question && answer) {
+            const newId = flashcards.length ? Math.max(...flashcards.map(f => f.id)) + 1 + validEntries : 1 + validEntries;
+            newFlashcards.push({ id: newId, question, answer });
+            validEntries++;
+        }
+    });
+
+    if (validEntries > 0) {
+        flashcards.push(...newFlashcards);
+        alert(`${validEntries} flashcard(s) added successfully!`);
+        renderFlashcards();
+        document.getElementById('bulkForm').reset();
+        const container = document.getElementById('bulkEntries');
+        container.innerHTML = `
+            <div class="bulk-entry-row row g-3 mb-3">
+                <div class="col-md-6">
+                    <textarea class="form-control question-input" placeholder="Enter Front" rows="3" required></textarea>
+                </div>
+                <div class="col-md-6">
+                    <textarea class="form-control answer-input" placeholder="Enter Back" rows="3" required></textarea>
+                </div>
+                <div class="col-md-+">
+                    <button type="button" class="btn btn-delete w-100" onclick="removeRow(this)">Remove</button>
+                </div>
+            </div>
+        `;
+    } else {
+        alert('Please fill in at least one valid question-answer pair.');
+    }
+}
+
+function showManualForm() {
+    document.getElementById('manualForm').style.display = 'block';
+    document.getElementById('uploadForm').style.display = 'none';
+    document.querySelectorAll('.toggle-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelector('button[onclick="showManualForm()"]').classList.add('active');
+}
+
+function showUploadForm() {
+    document.getElementById('manualForm').style.display = 'none';
+    document.getElementById('uploadForm').style.display = 'block';
+    document.querySelectorAll('.toggle-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelector('button[onclick="showUploadForm()"]').classList.add('active');
+}
+
+function openSet(){
+    window.location.href = "flashcard_set.html";
+
+}
+
+function editSet(){
+    window.location.href = "manage_flashcards.html";
+
+}
+
+
+
+
+
+function renderCard(index) {
+    const card = document.getElementById('card');
+    card.innerHTML = `
+    <div class="question-form" onclick="showAnswer()">
+        <h3>${flashcards[index].question}</h3>
+    </div>
+    <div class="answer-form" onclick="showQuestion()">
+        <h3>${flashcards[index].answer}</h3>
+    </div>
+    `;
+  showQuestion(); // Start with question side visible
+}
+
+function nextCard() {
+    currentIndex = (currentIndex + 1) % flashcards.length;
+    renderCard(currentIndex);
+}
+
+function prevCard() {
+    currentIndex = (currentIndex - 1 + flashcards.length) % flashcards.length;
+    renderCard(currentIndex);
+}
+// Initialize the first card when the page loads
+window.onload = () => {
+    renderCard(currentIndex);
+};

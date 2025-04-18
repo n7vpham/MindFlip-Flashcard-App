@@ -1,91 +1,67 @@
-<!-- TODO: Template This -->
-
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MindFlip - My Flashcards</title>
+    <title>MindFlip - Home</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Montserrat Font -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="css/styles.css">
 </head>
-
 <body>
     <canvas id="particles"></canvas>
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="home.html">MindFlip</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="home.html">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="myflashcards.html">My Flashcards</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#createModal">Create</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="profile.html">Profile</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="index.html">Logout</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+    <div id="navbar"></div>
+
+    <script>
+        fetch("component/navbar.html")
+        .then(res => res.text())
+        .then(data => {
+            document.getElementById("navbar").innerHTML = data;
+        });
+    </script>
+
 
     <div class="container">
+        <!-- Header -->
+        <header>
+            <h1>Flashcards</h1>
+        </header>
+
         <!-- Flashcard Section -->
-        <section class="flashcard-section">
-            <h1>My Flashcards</h1>
-            <div class="search-filter">
-                <div class="row g-3">
-                    <div class="col-md-6">
-                        <input type="text" class="form-control" id="searchInput" placeholder="Search flashcards...">
-                    </div>
-                    <div class="col-md-4">
-                        <select class="form-select" id="filterSelect">
-                            <option value="all">All</option>
-                            <option value="question">By Question</option>
-                            <option value="answer">By Answer</option>
-                        </select>
-                    </div>
-                    <div class="col-md-2">
-                        <button class="btn btn-custom w-100" onclick="searchFlashcards()">Search</button>
-                    </div>
+        <div class="container flip-card">
+            <div class="card" id="card">
+                <!-- Login Form -->
+                <div class="question-form" onclick="showQuestion()">
+                    <h3>What is the question</h3>
+                </div>
+
+                <!-- Signup Form -->
+                <div class="answer-form" onclick="showAnswer()">
+                    <h3>This is the answer</h3>
                 </div>
             </div>
-            <div class="flashcard-container" id="flashcardContainer">
-                <!-- Flashcards will be rendered here -->
-            </div>
-        </section>
+        </div>
+        <div class="d-flex justify-content-center mt-3">
+            <button style="color: black" class="btn btn-custom me-4" onclick="prevCard()">←</button>
+            <button style="color: black" class="btn btn-custom" onclick="nextCard()">→</button>
+        </div>
+
 
         <!-- Footer -->
         <footer>
             <p>© 2025 MindFlip. All rights reserved.</p>
         </footer>
     </div>
-
     <!-- Create Flashcard Modal -->
     <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="createModalLabel">Create Flashcard</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
-                        style="filter: invert(1);"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(1);"></button>
                 </div>
                 <div class="modal-body">
                     <form id="createForm">
@@ -112,8 +88,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="editModalLabel">Edit Flashcard</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
-                        style="filter: invert(1);"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(1);"></button>
                 </div>
                 <div class="modal-body">
                     <form id="editForm">
@@ -138,7 +113,6 @@
     <!-- Bootstrap JS and Popper.js -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
-    <script src="Javascript.js"></script>
+    <script src="js/Javascript.js"></script>
 </body>
-
 </html>
