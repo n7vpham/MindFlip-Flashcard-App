@@ -27,11 +27,34 @@
 <body>
     <div id="header">
         {% block nav %}
-        <div class="topnav">
-            {# <!-- To redirect, reference the name of the view function, with the name of the blueprint prepended --> #}
-            <a href="{{ url_for('main.show') }}">Home</a>
-            <a href="{{ url_for('main.show', page='login') }}">Log In</a>
-        </div>
+        <nav class="navbar navbar-expand-lg">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="{{ url_for('main.show', page='index') }}">MindFlip</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('main.show', page='home') }}">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('main.show', page='manage_sets') }}">Manage</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('main.show', page='create') }}">Create</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('main.show', page='profile') }}">Profile</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('users.logout_user') }}">Logout</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        
         {% endblock %}
     </div>
 

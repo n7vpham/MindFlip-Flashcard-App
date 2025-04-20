@@ -1,25 +1,25 @@
 <nav class="navbar navbar-expand-lg">
     <div class="container-fluid">
-        <a class="navbar-brand" href="home.html">MindFlip</a>
+        <a class="navbar-brand" href="{{ url_for('main.show', page='index') }}">MindFlip</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="home.html">Home</a>
+                    <a class="nav-link" href="{{ url_for('main.show', page='home') }}">Home</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="manage_sets.html">Manage</a>
+                    <a class="nav-link" href="{{ url_for('main.show', page='manage_sets') }}">Manage</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="create.html">Create</a>
+                    <a class="nav-link" href="{{ url_for('main.show', page='create') }}">Create</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="profile.html">Profile</a>
+                    <a class="nav-link" href="{{ url_for('main.show', page='profile') }}">Profile</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="index.html">Logout</a>
+                    <a class="nav-link" href="{{ url_for('users.logout_user') }}">Logout</a>
                 </li>
             </ul>
         </div>
