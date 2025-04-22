@@ -86,7 +86,7 @@ def get_specific_user_flashcards(set_id):
     
     return jsonify(requested_cards), 200
 
-# POST /users/flashcards
+# POST/GET /users/create
 # Creates a new set for the user based on the JSON request body and saves it to the users flashcard collection
 @flashcard_bp.route('/create', methods=["POST", "GET"])
 def create_set_route():
@@ -97,7 +97,8 @@ def create_set_route():
     try:
         user = get_user_by_id(user_id)
         if not user:
-            return jsonify({"error": "User is none"}), 404
+            flash("Please log in")
+            return redirect('login.html')
     except pymongo.errors.PyMongoError:
         return jsonify({"error": "No user exists with that ID or Database error"}), 404
 

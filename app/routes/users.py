@@ -106,8 +106,14 @@ def del_user_by_id_route(user_id):
 # POST /users/login
 # When a user clicks login in the login page, the request should include the email and password, that password is checked through a hash
 # and a session is created with the user id and the email
-@user_bp.route('/login', methods=["POST"])
+@user_bp.route('/login', methods=["POST", "GET"])
 def login_user():  
+    if session.get('user_id'):
+        return render_template('create.html')
+    
+    if request.method == "GET":
+        return render_template('loginsignup.html')
+
     logged_in = login_and_validate_user(request)
     if logged_in:
         return render_template("create.html")
@@ -117,15 +123,14 @@ def login_user():
 
 # POST /users/logout
 # Very simply just clears the session if there's a user actively logged in
-@user_bp.route("/logout", methods=["POST"])
+@user_bp.route("/logout", methods=["GET"])
 def logout_user():
     try:
         if 'user_id' not in session:
             return jsonify({"error": "There is no user logged in"}), 401
 
         session.clear()
-        return jsonify({"message": "Successfully logged out"}), 200
-
+        return render_template('index.html')
     except Exception as e:
         print(f"Logout Error: {e}")
         return jsonify({"error": "An error occurred during logout"}), 500
