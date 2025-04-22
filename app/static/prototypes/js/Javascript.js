@@ -117,9 +117,24 @@ function saveEdit() {
     }
 }
 
-function deleteFlashcard(id) {
-    flashcards = flashcards.filter(f => f.id !== id);
-    renderFlashcards();
+function deleteSet(setID) {
+    fetch(`/flashcards/${setID}`, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(res => {
+        if (res.ok) {
+            // Optionally refresh page or remove element from DOM
+            location.reload();
+        } else {
+            res.json().then(data => alert(data.error || "Failed to delete set."));
+        }
+    })
+    .catch(err => {
+        console.error("Error deleting set:", err);
+    });
 }
 
 function searchFlashcards() {
