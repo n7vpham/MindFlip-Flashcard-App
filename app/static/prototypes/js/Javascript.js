@@ -198,26 +198,6 @@ function removeRow(button) {
     }
 }
 
-function createFlashcards() {
-    const inputs = document.querySelectorAll('.bulk-entry-row');
-    let validEntries = 0;
-    let newFlashcards = [];
-    
-
-    inputs.forEach(row => {
-        const question = row.querySelector('.question-input').value.trim();
-        const answer = row.querySelector('.answer-input').value.trim();
-        if (question && answer) {
-            const newId = flashcards.length ? Math.max(...flashcards.map(f => f.id)) + 1 + validEntries : 1 + validEntries;
-            newFlashcards.push({ id: newId, question, answer });
-            validEntries++;
-        }
-    });
-
-    console.log(newFlashcards);
-
-}
-
 
 function createBulkFlashcards() {
     const inputs = document.querySelectorAll('.bulk-entry-row');
