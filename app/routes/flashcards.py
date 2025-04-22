@@ -164,7 +164,7 @@ def create_set_route():
         return jsonify({"error": "Internal server error"}), 500
 
     flash("Saved the set")
-    return redirect(url_for('flashcards.get_all_users_sets'))
+    return redirect(url_for('flashcards.get_all_users_sets_home'))
 
 # DELETE /users/flashcards/<set_id>
 # Deletes a flashcard set from the flashcards collection in the database and the user's reference to that

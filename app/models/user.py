@@ -116,6 +116,7 @@ def login_and_validate_user(request):
     if user and check_password_hash(user['password'], data.get("password")):
         session['user_id'] = str(user['_id'])
         session['email'] = user['email']
+        session['firstName'] = user['firstName']
 
         return True
     else:

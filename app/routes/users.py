@@ -138,3 +138,10 @@ def logout_user():
     except Exception as e:
         print(f"Logout Error: {e}")
         return jsonify({"error": "An error occurred during logout"}), 500
+
+@user_bp.route('/profile', methods=['GET'])
+def get_profile_page():
+    if session.get('user_id'):
+        return render_template('profile.html')
+    else:
+        return redirect(url_for('users.login_user'))
