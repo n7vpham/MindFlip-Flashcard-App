@@ -81,10 +81,11 @@ def get_specific_user_flashcards(set_id):
         if not requested_cards:
             return jsonify({"Error": "Flashcards not found"}), 404
     except pymongo.errors.PyMongoError as err:
-        print("pymongo exception in get_specific_user_flashcards(): {err}")
+        print(f"pymongo exception in get_specific_user_flashcards(): {err}")
         return jsonify({"Error": "Internal server error"}), 500
     
-    return jsonify(requested_cards), 200
+    return render_template('flashcard/flashcard_set.html')
+    # return jsonify(requested_cards), 200
 
 # POST/GET /users/create
 # Creates a new set for the user based on the JSON request body and saves it to the users flashcard collection
