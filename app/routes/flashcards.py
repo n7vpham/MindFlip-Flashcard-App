@@ -180,9 +180,20 @@ def upload_flashcards():
 
     # A get request to the same url should render the page to upload the set
     if request.method == "GET":
-        return render_template('test/test_upload.html')
+        if not session.get('user_id'):
+            flash('Please log in', 'error')
+            return redirect(url_for('login_user'))
+        return render_template('create.html')
 
-    #TODO: set up sessions so that the set can be saved for a user
+    user_id = session.get('user_id')
+    try:
+        user = get_user_by_id(user_id)
+        print(user)
+        if not user:
+            flash("Please log in")
+            return redirect('login.html')
+    except pymongo.errors.PyMongoError:
+        return jsonify({"error": "No user exists with that ID or Database error"}), 404
 
     flashcards = []
 
@@ -218,21 +229,23 @@ def upload_flashcards():
         "terms": flashcards,
     }
 
-    # Only saving to test db while user auth is not included
+    # test db save
     if current_app.config['TESTING']:
         set_id = save_set_to_flashcard_collection(flash_set)
         if set_id is None:
             return jsonify({"error": "Error saving the flashcard set to db"}), 500
         return jsonify({"id": set_id}), 201
 
-    #TODO: Once user auth is figured for session, set up set save funcionality 
-    # isSaved = save_set_for_user(user, set_id, set_name)
+    set_id = save_set_to_flashcard_collection(flash_set)
+    if not set_id:
+        flash(f'Error creating the flashcards with {filename}', 'error')
+        return redirect(request.referrer), 500
 
-    # if not isSaved:
-    #     return jsonify({"Error": "Error: Couldn't save flashcards for user"}, 400)
+    isSaved = save_set_for_user(user, set_id, set_name)
+    if not isSaved:
+        flash(f'Error saving the flashcards to {user['firstName']}\'s collection', 'error')
+        return redirect(request.referrer), 500
 
-    # return {"Message": "Successfully saved flashcards for user"}, 200
-    
-    # Change to code 201 when the set actually gets pushed to db
-    return jsonify(flash_set), 200
+    flash(f'Flaschards successfully created in {user['firstName']}\'s collection', 'success')
+    return redirect(url_for('flashcards.get_specific_user_flashcards', set_id=set_id)), 201
     
