@@ -237,15 +237,15 @@ def upload_flashcards():
         return jsonify({"id": set_id}), 201
 
     set_id = save_set_to_flashcard_collection(flash_set)
-    if not set_id:
+    if set_id is None:
         flash(f'Error creating the flashcards with {filename}', 'error')
-        return redirect(request.referrer), 500
+        return redirect(request.referrer or url_for('main.show'))
 
     isSaved = save_set_for_user(user, set_id, set_name)
     if not isSaved:
         flash(f'Error saving the flashcards to {user['firstName']}\'s collection', 'error')
-        return redirect(request.referrer), 500
+        return redirect(request.referrer or url_for('main.show'))
 
     flash(f'Flaschards successfully created in {user['firstName']}\'s collection', 'success')
-    return redirect(url_for('flashcards.get_specific_user_flashcards', set_id=set_id)), 201
+    return redirect(url_for('flashcards.get_specific_user_flashcards', set_id=set_id))
     

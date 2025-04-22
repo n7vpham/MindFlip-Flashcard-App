@@ -42,7 +42,7 @@ def save_set_for_user(user, setID, setName):
     
     except Exception as e:
         print(e)
-        return None
+        return False
         
 
 def save_flashcard(set_id, flashcard):
@@ -53,7 +53,7 @@ def save_flashcard(set_id, flashcard):
         return result.modified_count > 0
     except Exception as e:
         print(e)
-        return None
+        return False
 
 def get_set(set_id):
     db = current_app.config['DB']
