@@ -38,7 +38,7 @@
                             <p><strong>Description: </strong>{{ set['setDescription'] }}</p><hr>
                         </div>
                         <div class="flashcard-actions">
-                            <button class="btn-action" onclick="openSet()">Study</button>
+                            <button class="btn-action btn-delete" onclick="deleteSet('{{ set['_id'] }}')">Delete</button>  
                         </div>
                     </div>
                 {% endfor %}
