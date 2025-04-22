@@ -25,7 +25,7 @@ def get_all_sets_route():
         set["_id"] = str(set["_id"])
     return jsonify(sets), 200
     
-# GET /user/flashcards 
+# GET /user/flashcards/home
 # Returns the users flashcard sets
 @flashcard_bp.route('/flashcards/home', methods=["GET"])
 def get_all_users_sets_home():
@@ -53,7 +53,7 @@ def get_all_users_sets_home():
     return render_template('home.html', sets=sets), 200
 
 
-# GET /user/flashcards 
+# GET /user/flashcards/manage
 # Returns the users flashcard sets
 @flashcard_bp.route('/flashcards/manage', methods=["GET"])
 def get_all_users_sets_manage():
