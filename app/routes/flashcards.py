@@ -27,8 +27,8 @@ def get_all_sets_route():
     
 # GET /user/flashcards 
 # Returns the users flashcard sets
-@flashcard_bp.route('/flashcards', methods=["GET"])
-def get_all_users_sets():
+@flashcard_bp.route('/flashcards/home', methods=["GET"])
+def get_all_users_sets_home():
     user_id = session.get('user_id')
     try:
         user = get_user_by_id(user_id)
@@ -50,7 +50,35 @@ def get_all_users_sets():
             print(f"Error getting a set in get_all_users_sets(): {err}")
             return jsonify({"error": "Internal server error"}), 500
 
-    return jsonify(sets), 200
+    return render_template('home.html', sets=sets), 200
+
+
+# GET /user/flashcards 
+# Returns the users flashcard sets
+@flashcard_bp.route('/flashcards/manage', methods=["GET"])
+def get_all_users_sets_manage():
+    user_id = session.get('user_id')
+    try:
+        user = get_user_by_id(user_id)
+        if not user:
+            return jsonify({"error": "User is none"}), 404
+    except pymongo.errors.PyMongoError:
+        return jsonify({"error": "No user exists with that ID or Database error"}), 404
+    
+    # Returns: List of dictionaries --> {"set_id": "set_name"}
+    flashcards = user['flashcards']
+
+    sets = []
+    for set_id in flashcards.keys():
+        try:
+            set = get_set(set_id)
+            sets.append(set)
+        # If an error occurs, user might be referencing a set that doesn't exist
+        except pymongo.errors.PyMongoError as err:
+            print(f"Error getting a set in get_all_users_sets(): {err}")
+            return jsonify({"error": "Internal server error"}), 500
+
+    return render_template('manage_sets.html', sets=sets), 200
 
 # GET /users/flashcards/<setID>
 # Returns a users specific flashcard set as requested with the setID in dictionary form
@@ -91,6 +119,10 @@ def get_specific_user_flashcards(set_id):
 # Creates a new set for the user based on the JSON request body and saves it to the users flashcard collection
 @flashcard_bp.route('/create', methods=["POST", "GET"])
 def create_set_route():
+
+    if not session.get('user_id'):
+        return render_template('loginsignup.html')
+    
     if request.method == "GET":
         return render_template('create.html')
 

@@ -1,76 +1,40 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
+{% extends "base.html" %}
+
+{% block head %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MindFlip - Manage</title>
+    <title>MindFlip - Home</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Montserrat Font -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/styles.css">
-</head>
-<body>
-    <canvas id="particles"></canvas>
-    <!-- Navbar -->
-    <div id="navbar"></div>
+    <link rel="stylesheet" href="{{ url_for('static', filename='prototypes/css/styles.css') }}">
+{% endblock %}
 
-    <script>
-        fetch("component/navbar.html")
-        .then(res => res.text())
-        .then(data => {
-            document.getElementById("navbar").innerHTML = data;
-        });
-    </script>
+{% block content %}
+    <canvas id="particles"></canvas>
 
     <div class="container">
         <!-- Flashcard Section -->
         <section class="flashcard-section">
-            <h1>Manage Sets</h1>
-            <div class="search-filter">
-                <div class="row g-3">
-                    <div class="col-md-10">
-                        <input type="text" class="form-control" id="searchInput" placeholder="Search flashcards...">
-                    </div>
-                    <div class="col-md-2">
-                        <button class="btn btn-custom w-500" onclick="">Search</button>
-                    </div>
-                </div>
-            </div>
-            <section class="flashcard-section">
+            <!-- Header -->
+            <header>
+                <h1>Welcome to MindFlip</h1>
+                <p class="tagline">Flip Your Way to Mastery with Flashcards</p>
+            </header>
             <div class="flashcard-container">
-                <div class="flashcard" data-id="1">
-                    <div>
-                        <h3><strong></strong> Set Name</h3>
-                        <p><strong>Description: </strong> Set Description</p><hr>
+                {% for set in sets %}
+                    <div class="flashcard" data-id="1">
+                        <div>
+                            <h3><strong></strong>{{ set['setName'] }}</h3>
+                            <p><strong>Description: </strong>{{ set['setDescription'] }}</p><hr>
+                        </div>
+                        <div class="flashcard-actions">
+                            <button class="btn-action" onclick="openSet()">Study</button>
+                        </div>
                     </div>
-                    <div class="flashcard-actions">
-                        <button class="btn-action" onclick="editSet()">Edit</button>
-                        <button class="btn-action btn-delete" onclick="">Delete</button>
-                    </div>
-                </div>
-                <div class="flashcard" data-id="2">
-                    <div>
-                        <h3><strong></strong> Set Name</h3>
-                        <p><strong>Description: </strong> Set Description</p><hr>
-                    </div>
-                    <div class="flashcard-actions">
-                        <button class="btn-action" onclick="editSet()">Edit</button>
-                        <button class="btn-action btn-delete" onclick="">Delete</button>
-                    </div>
-                </div>
-                <div class="flashcard" data-id="3">
-                    <div>
-                        <h3><strong></strong> Set Name</h3>
-                        <p><strong>Description: </strong> Set Description</p><hr>
-                    </div>
-                    <div class="flashcard-actions">
-                        <button class="btn-action" onclick="editSet()">Edit</button>
-                        <button class="btn-action btn-delete" onclick="">Delete</button>
-                    </div>
-                </div>
+                {% endfor %}
             </div>
-        </section>
         </section>
 
         <!-- Footer -->
@@ -105,6 +69,7 @@
             </div>
         </div>
     </div>
+
     <!-- Edit Flashcard Modal -->
     <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
@@ -132,11 +97,9 @@
             </div>
         </div>
     </div>
-    
 
     <!-- Bootstrap JS and Popper.js -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
-    <script src="js/Javascript.js"></script>
-</body>
-</html>
+    <script src="{{ url_for('static', filename='prototypes/js/Javascript.js') }}"></script>
+{% endblock %}

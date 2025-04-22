@@ -177,10 +177,10 @@ function addRow() {
     row.className = 'bulk-entry-row row g-3 mb-3';
     row.innerHTML = `
         <div class="col-md-6">
-            <textarea class="form-control question-input" placeholder="Front" rows="3" required></textarea>
+            <textarea class="form-control question-input" name="front" placeholder="Front" rows="3" required></textarea>
         </div>
         <div class="col-md-6">
-            <textarea class="form-control answer-input" placeholder="Back" rows="3" required></textarea>
+            <textarea class="form-control answer-input" name="back" placeholder="Back" rows="3" required></textarea>
         </div>
         <div class="col-md-+">
             <button type="button" class="btn btn-delete w-100" onclick="removeRow(this)">Remove</button>

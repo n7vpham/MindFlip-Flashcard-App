@@ -15,21 +15,25 @@ user_bp.register_blueprint(flashcard_bp)#, url_prefix='/<user_id>')
 # You can test this out by doing curl http://127.0.0.1:5000/users, might not be the path we used in the end but it works for now
 # GET /users
 # Returns all users in the database
-@user_bp.route('/', methods=['GET'])
-def get_users_route():  
-    # db = current_app.config['DB']
-    # users_collection = db['users']
 
-    try:
-        #users = list(users_collection.find({}, {'_id': 0}))
-        users = get_users()
-        if not users:
-            return ({"error": "Error: Collection found to have no users"}, 404)
+#
+# COMMENTING OUT BECAUSE WE DON'T HAVE ADMIN FUNCTIONALITY
+#
+# @user_bp.route('/', methods=['GET'])
+# def get_users_route():  
+#     # db = current_app.config['DB']
+#     # users_collection = db['users']
+
+#     try:
+#         #users = list(users_collection.find({}, {'_id': 0}))
+#         users = get_users()
+#         if not users:
+#             return ({"error": "Error: Collection found to have no users"}, 404)
         
-    except pymongo.error.PyMongoError:
-        return jsonify({"error": "Error: Unable to retrieve all users from database"}, 404)
+#     except pymongo.error.PyMongoError:
+#         return jsonify({"error": "Error: Unable to retrieve all users from database"}, 404)
     
-    return jsonify(users), 200
+#     return jsonify(users), 200
 
 # POST /users
 # Creates a new user
