@@ -113,14 +113,14 @@ def del_user_by_id_route(user_id):
 @user_bp.route('/login', methods=["POST", "GET"])
 def login_user():  
     if session.get('user_id'):
-        return render_template('create.html')
+        return redirect(url_for('flashcards.get_all_users_sets_home'))
     
     if request.method == "GET":
         return render_template('loginsignup.html')
 
     logged_in = login_and_validate_user(request)
     if logged_in:
-        return render_template("create.html")
+        return redirect(url_for('flashcards.get_all_users_sets_home'))
     else:
         return jsonify({"error": "You were unable to login, please check email or password"}), 401
     

@@ -32,7 +32,11 @@
         {% block nav %}
         <nav class="navbar navbar-expand-lg">
             <div class="container-fluid">
-                <a class="navbar-brand" href="{{ url_for('main.show', page='index') }}">MindFlip</a>
+                {% if session.get('user_id') %}
+                    <a class="navbar-brand" href="{{ url_for('flashcards.get_all_users_sets_home') }}">MindFlip</a>
+                {% else %}
+                    <a class="navbar-brand" href="{{ url_for('main.show', page='index') }}">MindFlip</a>
+                {% endif %}
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
