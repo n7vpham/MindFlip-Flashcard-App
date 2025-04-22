@@ -9,7 +9,6 @@
 {% endblock %}
 
 {% block content %}
-<canvas id="particles"></canvas>
 
 <div class="container">
     <!-- Header -->
@@ -100,4 +99,11 @@
 
 {% block footer %}
 {{ super() }}
+
+<script>
+    const studyCards = {{ flashcards['terms'] | tojson }};
+    console.log(studyCards)
+</script>
+
+<script src="{{ url_for('static', filename='prototypes/js/study.js') }}"></script>
 {% endblock %}

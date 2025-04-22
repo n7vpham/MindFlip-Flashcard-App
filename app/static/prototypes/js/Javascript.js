@@ -51,12 +51,16 @@ function animate() {
 init();
 animate();
 
+/*
 // Flashcard Management
 let flashcards = [
     { id: 1, question: "What is the capital of France?", answer: "Paris" },
     { id: 2, question: "What is 2 + 2?", answer: "4" },
     { id: 3, question: "Who wrote Romeo and Juliet?", answer: "Shakespeare" }
 ];
+*/
+
+let flashcards = [];
 
 function renderFlashcards(filteredCards = flashcards) {
     const container = document.getElementById('flashcardContainer');
@@ -158,12 +162,14 @@ function showLogin() {
 }
 function showQuestion() {
     const card = document.getElementById('card');
-    card.classList.add('answer');
+    if (card.classList.contains('answer')) {
+        card.classList.remove('answer');
+    }
 }
 
 function showAnswer() {
     const card = document.getElementById('card');
-    card.classList.remove('answer');
+    card.classList.add('answer');
 }
 function addRow() {
     const container = document.getElementById('bulkEntries');
@@ -191,6 +197,28 @@ function removeRow(button) {
         alert('At least one row is required.');
     }
 }
+
+function createFlashcards() {
+    const inputs = document.querySelectorAll('.bulk-entry-row');
+    let validEntries = 0;
+    let newFlashcards = [];
+    
+
+    inputs.forEach(row => {
+        const question = row.querySelector('.question-input').value.trim();
+        const answer = row.querySelector('.answer-input').value.trim();
+        if (question && answer) {
+            const newId = flashcards.length ? Math.max(...flashcards.map(f => f.id)) + 1 + validEntries : 1 + validEntries;
+            newFlashcards.push({ id: newId, question, answer });
+            validEntries++;
+        }
+    });
+
+    console.log(newFlashcards);
+
+}
+
+
 function createBulkFlashcards() {
     const inputs = document.querySelectorAll('.bulk-entry-row');
     let validEntries = 0;
@@ -257,7 +285,7 @@ function editSet(){
 
 
 
-
+/*
 function renderCard(index) {
     const card = document.getElementById('card');
     card.innerHTML = `
@@ -284,3 +312,4 @@ function prevCard() {
 window.onload = () => {
     renderCard(currentIndex);
 };
+*/

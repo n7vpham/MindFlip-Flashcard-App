@@ -84,7 +84,7 @@ def get_specific_user_flashcards(set_id):
         print(f"pymongo exception in get_specific_user_flashcards(): {err}")
         return jsonify({"Error": "Internal server error"}), 500
     
-    return render_template('flashcard/flashcard_set.html')
+    return render_template('flashcard/flashcard_set.html', flashcards=requested_cards)
     # return jsonify(requested_cards), 200
 
 # POST/GET /users/create
