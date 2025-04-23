@@ -19,7 +19,11 @@
         <section class="flashcard-section">
             <!-- Header -->
             <header>
+                {% if session %}
+                <h1>Welcome to MindFlip, {{ session['firstName'] }}</h1>
+                {% else %}
                 <h1>Welcome to MindFlip</h1>
+                {% endif %}
                 <p class="tagline">Flip Your Way to Mastery with Flashcards</p>
             </header>
             <div class="flashcard-container">
