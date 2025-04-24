@@ -2,6 +2,7 @@ import os
 from dotenv import load_dotenv
 import pytest
 from app import create_app
+from bson.objectid import ObjectId
 from werkzeug.security import generate_password_hash
 
 @pytest.fixture
@@ -43,4 +44,36 @@ def test_user(test_user_collection):
     result = test_user_collection.insert_one(data)
     data['_id'] = result.inserted_id
     return data
-    
+
+@pytest.fixture
+def test_flashcards(test_flashcard_collection, test_user_collection, test_user):
+    data = {
+        "setName": "test",
+        "setDescription": "test flashcard set",
+        "terms": [
+            {
+                "front": "f1",
+                "back": "b1"
+            },
+            {
+                "front": "f2",
+                "back": "b2"
+            },
+            {
+                "front": "f3",
+                "back": "b3"
+            },
+        ]
+    }
+
+    result_id = test_flashcard_collection.insert_one(data).inserted_id
+    set_id = str(result_id)
+
+    result = test_user_collection.update_one({"_id": ObjectId(test_user['_id'])}, 
+                                   {"$set": {f"flashcards.{set_id}": data['setName']}})
+
+    assert result.modified_count > 0
+
+    data['_id'] = result_id
+    return data
+
