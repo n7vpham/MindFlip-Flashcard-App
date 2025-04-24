@@ -26,11 +26,11 @@ def test_db(app):
 
 @pytest.fixture
 def test_user_collection(test_db):
-    return test_db['test_users']
+    return test_db['users']
 
 @pytest.fixture
 def test_flashcard_collection(test_db):
-    return test_db['test_flashcards']
+    return test_db['flashcards']
 
 @pytest.fixture
 def test_user(test_user_collection):
