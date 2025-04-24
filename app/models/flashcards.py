@@ -43,7 +43,18 @@ def save_set_for_user(user, setID, setName):
     except Exception as e:
         print(e)
         return False
-        
+
+def edit_set(set_id, new_set):
+    db = current_app.config['DB']
+    collection = db['flashcards']
+
+    try:
+        result = collection.update_one({"_id": ObjectId(set_id)},
+                                       {"$set": new_set})
+        return result.modified_count > 0
+    except Exception as e:
+        print(f"Error in edit_set(): {e}")
+        return False
 
 def save_flashcard(set_id, flashcard):
     db = current_app.config['DB']

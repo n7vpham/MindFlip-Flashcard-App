@@ -28,13 +28,11 @@ def test_edit(client, test_user, test_flashcards):
 
     print(test_flashcards['_id'])
     set_id = test_flashcards['_id']
-    response = client.put(f'/flashcards/edit/{set_id}', data={
+    response = client.put(f'/flashcards/{set_id}/edit', data={
         "setName": "modifiedSet",
-        "setDesciption": "this set was edited",
-        "front": "new f1",
-        "back": "new b1",
-        "front": "new f2",
-        "back": "new b2"
+        "setDescription": "this set was edited",
+        "front": ["new f1", "new b1"],
+        "back": ["new f2", "new b2"]
     })
 
-    assert response.status_code == 200
+    assert response.status_code == 302
