@@ -83,41 +83,90 @@ function renderFlashcards(filteredCards = flashcards) {
     });
 }
 
-function createFlashcard() {
+function createFlashcard(set_id) {
     const question = document.getElementById('question').value;
     const answer = document.getElementById('answer').value;
     if (question && answer) {
         // fetch post
-        
+        const data = {
+            front: question,
+            back: answer
+        };
 
-
-        renderFlashcards();
-        document.getElementById('createForm').reset();
-        bootstrap.Modal.getInstance(document.getElementById('createModal')).hide();
+        fetch(`/flashcards/${set_id}/api/create`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                renderFlashcards();
+                document.getElementById('createForm').reset();
+                bootstrap.Modal.getInstance(document.getElementById('createModal')).hide();
+            }
+        })
+        .catch(error => {
+            console.error('Error saving flashcard:', error.message);
+            alert(`Error: ${error.message}`);
+        });
+    } else {
+        console.error('Missing question or answer');
+        alert('Error: Missing question or answer');
     }
 }
 
-function editFlashcard(id) {
-    const card = flashcards.find(f => f.id === id);
-    if (card) {
-        document.getElementById('editId').value = id;
-        document.getElementById('editQuestion').value = card.front;
-        document.getElementById('editAnswer').value = card.back;
+// hold onto the front of a card for edits
+let card_front_identifier;
+
+function editFlashcard(front, back) {
+    card_front_identifier = front;
+    if (front && back) {
+        console.log(card_front_identifier);
+        document.getElementById('editQuestion').value = front;
+        document.getElementById('editAnswer').value = back;
         new bootstrap.Modal(document.getElementById('editModal')).show();
     }
 }
 
-function saveEdit() {
+function saveEdit(set_id) {
     const question = document.getElementById('editQuestion').value;
     const answer = document.getElementById('editAnswer').value;
+      
     if (question && answer) {
         // fetch put
+        const data = {
+            old_front: card_front_identifier,
+            front: question,
+            back: answer
+        }
 
-
-        renderFlashcards();
-        bootstrap.Modal.getInstance(document.getElementById('editModal')).hide();
+        fetch(`/flashcards/${set_id}/api/edit`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                renderFlashcards();
+                bootstrap.Modal.getInstance(document.getElementById('editModal')).hide();
+            }
+        })
+        .catch(error => {
+            console.error('Error saving flashcard:', error.message);
+            alert(`Error: ${error.message}`);
+        });
+    } else {
+        console.error('Missing question or answer');
+        alert('Error: Missing question or answer');
     }
 }
+
 
 function deleteSet(setID) {
     fetch(`/flashcards/${setID}`, {

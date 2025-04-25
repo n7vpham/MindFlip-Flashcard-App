@@ -3,25 +3,31 @@
 function renderFlashcards(filteredCards = flashcards) {
     const container = document.getElementById('flashcardContainer');
     container.innerHTML = '';
+    let index = 0;
     filteredCards.forEach(card => {
         const div = document.createElement('div');
         div.className = 'flashcard';
-        div.dataset.id = card.id;
+        div.dataset.id = index;
         div.innerHTML = `
             <div class="flashcard-content">
-                <p><strong>Front:</strong> ${card.front}</p>
-                <p><strong>Back:</strong> ${card.back}</p>
+                <p class="fl-front"><strong>Front:</strong> ${card.front}</p>
+                <p class="fl-back"><strong>Back:</strong> ${card.back}</p>
             </div>
             <div class="flashcard-actions">
-                <button class="btn-action" onclick="editFlashcard(${card.id})">Edit</button>
-                <button class="btn-action btn-delete" onclick="deleteFlashcard(${card.id})">Delete</button>
+                <button class="btn-action btn-edit">Edit</button>
+                <button class="btn-action btn-delete" onclick="deleteFlashcards()">Delete</button>
             </div>
         `;
+
+        div.querySelector('.btn-edit').addEventListener('click', () => {
+            editFlashcard(card.front, card.back);
+        });
+
         container.appendChild(div);
+        index++;
     });
 }
 
 window.onload = () => {
-    console.log(flashcards)
     renderFlashcards(flashcards)
 }

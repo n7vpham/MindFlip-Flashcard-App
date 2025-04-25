@@ -297,7 +297,7 @@ def edit_set_route(set_id):
         if set_id not in user['flashcards'].keys():
             abort(404)
         card_set = get_set(set_id)
-        return render_template('manage_flashcards.html', flashcards=card_set['terms'])
+        return render_template('manage_flashcards.html', flashcards=card_set['terms'], set_id=set_id)
 
     user_id = session.get('user_id')
     try:
@@ -360,7 +360,7 @@ def edit_set_route(set_id):
 
 
 # JSON API ROUTES
-@flashcard_bp.route('flashcards/<set_id>/api/create', methods=["POST"])
+@flashcard_bp.route('/flashcards/<set_id>/api/create', methods=["POST"])
 def api_create(set_id):
     user_id = session.get('user_id')
     try:
@@ -384,7 +384,7 @@ def api_create(set_id):
         print(f"Validation error in api_create(): {e}")
         return jsonify({"error": "Invalid flashcard format"}), 400
     
-@flashcard_bp.route('flashcards/<set_id>/api/edit', methods=["PUT"])
+@flashcard_bp.route('/flashcards/<set_id>/api/edit', methods=["PUT"])
 def api_edit(set_id):
     user_id = session.get('user_id')
     try:
@@ -414,7 +414,7 @@ def api_edit(set_id):
         print(f"Validation error in api_create(): {e}")
         return jsonify({"error": "Invalid flashcard format"}), 400
 
-@flashcard_bp.route('flashcards/<set_id>/api/delete', methods=["DELETE"])
+@flashcard_bp.route('/flashcards/<set_id>/api/delete', methods=["DELETE"])
 def api_delete(set_id):
     user_id = session.get('user_id')
     try:
