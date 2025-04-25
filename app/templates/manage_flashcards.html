@@ -104,6 +104,7 @@
     <script>
         let flashcards = {{ flashcards | tojson }}
         console.log(flashcards);
+        let set_id = {{ set_id | tojson }}
     </script>
     <script src="{{ url_for('static', filename='prototypes/js/edit.js')}}"></script>
     
