@@ -6,7 +6,7 @@ from .flashcards import flashcard_bp
 from ..models.user import get_user_by_id, delete_user_by_id, get_users, create_user, save_user, login_and_validate_user
 from ..models.schema import UserSchema
 from marshmallow import ValidationError
-from werkzeug.security import check_password_hash
+from werkzeug.security import check_password_hash, generate_password_hash
 
 
 user_bp = Blueprint('users', __name__, url_prefix='/users')
@@ -100,11 +100,54 @@ def del_user_by_id_route(user_id):
     return {"Message": "Successful deletion"}, 200
 
 
-
-# PUT /users/<user_id>
+# PUT /users
 # Could be used for updating passwords, not sure yet..
-# @user_bp.route('/<user_id>', methods=["PUT"])
-# def update_user_by_id(user_id, updated_value):
+@user_bp.route('/', methods=["PUT"])
+def update_user_by_id():
+    db = current_app.config['DB']
+    users_collection = db['users']
+
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({"error": "User not logged in"}), 401
+
+    try:
+        data = request.get_json()
+        update_fields = {}
+
+        # Optional updates if values are provided
+        if 'firstName' in data and len('firstName') > 0:
+            update_fields['firstName'] = data['firstName']
+            session['firstName'] = data['firstName']
+ 
+        if 'lastName' in data and len(data['lastName']) > 0:
+            update_fields['lastName'] = data['lastName']
+
+        if 'email' in data and len(data['email']) > 0:
+            update_fields['email'] = data['email']
+
+        if 'password' in data and data['password'].strip() != "":
+            update_fields['password'] = generate_password_hash(data['password'])
+
+        if not update_fields:
+            return jsonify({"message": "No changes provided"}), 400
+
+        result = users_collection.update_one(
+            {"_id": ObjectId(user_id)},
+            {"$set": update_fields}
+        )
+
+        if result.matched_count == 0:
+            return jsonify({"error": "User not found"}), 404
+
+        return jsonify({"redirect": url_for('flashcards.get_all_users_sets_home')}), 200
+
+    except pymongo.errors.PyMongoError as e:
+        print(f"MongoDB error: {e}")
+        return jsonify({"error": "Database error"}), 500
+    except Exception as e:
+        print(f"Unexpected error: {e}")
+        return jsonify({"error": "Server error"}), 500
 
 
 # POST /users/login
