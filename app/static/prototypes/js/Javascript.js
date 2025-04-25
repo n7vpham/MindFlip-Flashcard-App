@@ -132,7 +132,7 @@ function editFlashcard(front, back) {
 function saveEdit(set_id) {
     const question = document.getElementById('editQuestion').value;
     const answer = document.getElementById('editAnswer').value;
-      
+    
     if (question && answer) {
         // fetch put
         const data = {
@@ -325,11 +325,38 @@ function editSet(){
 
 }
 function editUser() {
+    if (event) event.preventDefault();
+    const firstName = document.getElementById("fname").value.trim();
+    const lastName = document.getElementById("lname").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
+
+    // Check validation only if fields are filled (since user can leave them blank to keep current)
+    if (firstName && (firstName.length < 2 || firstName.length > 15)) {
+        alert("First name must be between 2 and 15 characters.");
+        return;
+    }
+
+    if (lastName && (lastName.length < 2 || lastName.length > 15)) {
+        alert("Last name must be between 2 and 15 characters.");
+        return;
+    }
+
+    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        alert("Please enter a valid email address.");
+        return;
+    }
+
+    if (password && password.length < 8) {
+        alert("Password must be at least 8 characters long.");
+        return;
+    }
+
     const payload = {
-        firstName: document.getElementById("fname").value,
-        lastName: document.getElementById("lname").value,
-        email: document.getElementById("email").value,
-        password: document.getElementById("password").value
+        firstName: firstName,
+        lastName: lastName,
+        email: email,
+        password: password
     };
 
     fetch('/users', {
@@ -341,14 +368,28 @@ function editUser() {
     })
     .then(res => res.json())
     .then(data => {
+        const messageBox = document.getElementById("statusMessage");
+
         if (data.redirect) {
             window.location.href = data.redirect;
         } else if (data.message) {
-            alert(data.message);
+            messageBox.textContent = data.message;
+            messageBox.className = "alert alert-success";
+            messageBox.style.display = "block";
+            
+            document.getElementById("password").value = "";
+            
+            // Optional: auto-hide after 3 seconds
+            setTimeout(() => {
+                messageBox.style.display = "none";
+            }, 3000);
         } else if (data.error) {
-            alert("Error: " + data.error);
+            messageBox.textContent = data.error;
+            messageBox.className = "alert alert-danger";
+            messageBox.style.display = "block";
         }
     })
+    
     .catch(err => console.error("Update failed:", err));
 }
 

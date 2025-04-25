@@ -35,8 +35,9 @@ def save_set_for_user(user, setID, setName):
     db = current_app.config['DB']
     collection = db['users']
     try:
-        result = collection.update_one({"_id": ObjectId(user['_id'])}, 
-                                       {"$set": {f"flashcards.{setID}": setName}})
+        result = collection.update_one(
+            {"_id": ObjectId(user['_id'])}, 
+            {"$set": {f"flashcards.{setID}": setName}})
         
         return result.modified_count > 0
     
@@ -49,8 +50,9 @@ def edit_set(set_id, new_set):
     collection = db['flashcards']
 
     try:
-        result = collection.update_one({"_id": ObjectId(set_id)},
-                                       {"$set": new_set})
+        result = collection.update_one(
+            {"_id": ObjectId(set_id)}, 
+            {"$set": new_set})
         return result.modified_count > 0
     except Exception as e:
         print(f"Error in edit_set(): {e}")
