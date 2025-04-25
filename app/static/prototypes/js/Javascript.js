@@ -103,9 +103,7 @@ function createFlashcard(set_id) {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                renderFlashcards();
-                document.getElementById('createForm').reset();
-                bootstrap.Modal.getInstance(document.getElementById('createModal')).hide();
+                location.reload();
             }
         })
         .catch(error => {
@@ -153,8 +151,7 @@ function saveEdit(set_id) {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                renderFlashcards();
-                bootstrap.Modal.getInstance(document.getElementById('editModal')).hide();
+                location.reload();
             }
         })
         .catch(error => {
