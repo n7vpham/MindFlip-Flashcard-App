@@ -8,7 +8,7 @@ from marshmallow import ValidationError
 
 from ..models.schema import flashcardsSchema
 from ..models.user import get_user_by_id
-from ..models.flashcards import validate_set, save_set_to_flashcard_collection, save_set_for_user, get_set, delete_set_from_flashcard_collection, delete_flashcard_for_user, get_all_sets, edit_set
+from ..models.flashcards import validate_set, save_set_to_flashcard_collection, save_set_for_user, get_set, delete_set_from_flashcard_collection, delete_flashcard_for_user, get_all_sets, edit_set, json_validate_flashcard, json_create, json_edit, json_delete
 from app.utils.conversions import FileConvert
 
 
@@ -289,14 +289,22 @@ def edit_set_route(set_id):
         return redirect(url_for('login_user'))
     
     if request.method == "GET":
-        return render_template('edit.html')
+        user_id = session.get('user_id')
+        user = get_user_by_id(user_id)
+        if not user:
+            flash("Please log in")
+            return redirect(url_for('login_user'))
+        if set_id not in user['flashcards'].keys():
+            abort(404)
+        card_set = get_set(set_id)
+        return render_template('manage_flashcards.html', flashcards=card_set['terms'])
 
     user_id = session.get('user_id')
     try:
         user = get_user_by_id(user_id)
         if not user:
             flash("Please log in")
-            return redirect('login.html')
+            return redirect(url_for('login_user'))
     except pymongo.errors.PyMongoError:
         return jsonify({"error": "No user exists with that ID or Database error"}), 404
     
@@ -349,5 +357,84 @@ def edit_set_route(set_id):
 
     flash("Saved the set")
     return redirect(url_for('flashcards.get_all_users_sets_home'))
+
+
+# JSON API ROUTES
+@flashcard_bp.route('flashcards/<set_id>/api/create', methods=["POST"])
+def api_create(set_id):
+    user_id = session.get('user_id')
+    try:
+        user = get_user_by_id(user_id)
+        if not user:
+            return jsonify({"error": "Unauthorized"}), 401
+    except pymongo.errors.PyMongoError:
+        return jsonify({"error": "No user exists with that ID or Database error"}), 404
+
+    data = request.get_json()
+    if not data:
+        return jsonify({"error": "Missing required 'id' field"}), 400
+
+    try:
+        validated_data = json_validate_flashcard(data)
+        result = json_create(set_id, validated_data)
+        if not result:
+            return jsonify({"error": "Server error creating flashcard"}), 500
+        return jsonify({"success": "Flashcard created successfully"}), 200
+    except ValueError as e:
+        print(f"Validation error in api_create(): {e}")
+        return jsonify({"error": "Invalid flashcard format"}), 400
+    
+@flashcard_bp.route('flashcards/<set_id>/api/edit', methods=["PUT"])
+def api_edit(set_id):
+    user_id = session.get('user_id')
+    try:
+        user = get_user_by_id(user_id)
+        if not user:
+            return jsonify({"error": "Unauthorized"}), 401
+    except pymongo.errors.PyMongoError:
+        return jsonify({"error": "No user exists with that ID or Database error"}), 404
+
+    data = request.get_json()
+    if not data: 
+        return jsonify({"error": "Missing required 'id' field"}), 400
+
+    if 'old_front' not in data:
+        return jsonify({"error": "Missing flashcard identifier 'old_front'"}), 400
+
+    old_front = data.get('old_front')
+    data.pop('old_front')
+
+    try:
+        validated_data = json_validate_flashcard(data)
+        result = json_edit(set_id, old_front, validated_data)
+        if not result:
+            return jsonify({"error": "Server error updating flashcard"}), 500
+        return jsonify({"success": "Flashcard updated successfully"}), 200
+    except ValueError as e:
+        print(f"Validation error in api_create(): {e}")
+        return jsonify({"error": "Invalid flashcard format"}), 400
+
+@flashcard_bp.route('flashcards/<set_id>/api/delete', methods=["DELETE"])
+def api_delete(set_id):
+    user_id = session.get('user_id')
+    try:
+        user = get_user_by_id(user_id)
+        if not user:
+            return jsonify({"error": "Unauthorized"}), 401
+    except pymongo.errors.PyMongoError:
+        return jsonify({"error": "No user exists with that ID or Database error"}), 404
+
+    data = request.get_json()
+    if not data:
+        return jsonify({"error": "Missing data"}), 400
+
+    card_front = data['card_front']
+    if card_front is None:
+        return jsonify({"error": "Missing identifier 'card_front'"}), 400
+
+    result = json_delete(set_id, card_front)
+    if not result:
+        return jsonify({"error": "Server error deleting flashcard"}), 500
+    return jsonify({"success": "Flashcard deleted successfully"}), 200
 
 

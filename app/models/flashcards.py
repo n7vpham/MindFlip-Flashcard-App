@@ -1,7 +1,7 @@
 from bson import json_util
 from bson.objectid import ObjectId
 from flask import Blueprint, current_app, jsonify
-from ..models.schema import flashcardsSchema
+from ..models.schema import flashcardsSchema, CardSchema
 from marshmallow import ValidationError
 import pymongo
 
@@ -138,3 +138,46 @@ def delete_flashcard_for_user(user_id, set_id):
     except Exception as e:
         print(e)
         return False
+
+# JSON API Model functions
+def json_validate_flashcard(json):
+    flashcard_schema = CardSchema()
+    validated_flashcards = flashcard_schema.load(json)
+
+    return validated_flashcards
+
+# Creates or edits a flashcard for a given (validated) set
+def json_create(set_id, json):
+    db = current_app.config['DB']
+    collection = db['flashcards']
+
+    result = collection.update_one(
+        {"_id": ObjectId(set_id)},
+        {"$push": {"terms": json}}
+    )
+
+    return result.modified_count > 0
+
+# Modifies a flashcard for a given (validated) set
+def json_edit(set_id, old_front, json):
+    db = current_app.config['DB']
+    collection = db['flashcards']
+
+    result = collection.update_one(
+        {"_id": ObjectId(set_id), "terms.front": old_front},
+        {"$set": {"terms.$": json}},
+        upsert = True
+    )
+
+    return result.modified_count > 0
+
+def json_delete(set_id, card_front):
+    db = current_app.config['DB']
+    collection = db['flashcards']
+
+    result = collection.update_one(
+        {"_id": ObjectId(set_id), "terms.front": card_front},
+        {"$pull": {"terms": {"front": card_front}}}
+    )
+
+    return result.modified_count > 0

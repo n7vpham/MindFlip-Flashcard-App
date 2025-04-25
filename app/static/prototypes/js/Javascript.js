@@ -60,7 +60,7 @@ let flashcards = [
 ];
 */
 
-let flashcards = [];
+// let flashcards = [];
 
 function renderFlashcards(filteredCards = flashcards) {
     const container = document.getElementById('flashcardContainer');
@@ -71,8 +71,8 @@ function renderFlashcards(filteredCards = flashcards) {
         div.dataset.id = card.id;
         div.innerHTML = `
             <div class="flashcard-content">
-                <p><strong>Front:</strong> ${card.question}</p>
-                <p><strong>Back:</strong> ${card.answer}</p>
+                <p><strong>Front:</strong> ${card.front}</p>
+                <p><strong>Back:</strong> ${card.back}</p>
             </div>
             <div class="flashcard-actions">
                 <button class="btn-action" onclick="editFlashcard(${card.id})">Edit</button>
@@ -87,8 +87,10 @@ function createFlashcard() {
     const question = document.getElementById('question').value;
     const answer = document.getElementById('answer').value;
     if (question && answer) {
-        const newId = flashcards.length ? Math.max(...flashcards.map(f => f.id)) + 1 : 1;
-        flashcards.push({ id: newId, question, answer });
+        // fetch post
+        
+
+
         renderFlashcards();
         document.getElementById('createForm').reset();
         bootstrap.Modal.getInstance(document.getElementById('createModal')).hide();
@@ -99,19 +101,19 @@ function editFlashcard(id) {
     const card = flashcards.find(f => f.id === id);
     if (card) {
         document.getElementById('editId').value = id;
-        document.getElementById('editQuestion').value = card.question;
-        document.getElementById('editAnswer').value = card.answer;
+        document.getElementById('editQuestion').value = card.front;
+        document.getElementById('editAnswer').value = card.back;
         new bootstrap.Modal(document.getElementById('editModal')).show();
     }
 }
 
 function saveEdit() {
-    const id = parseInt(document.getElementById('editId').value);
     const question = document.getElementById('editQuestion').value;
     const answer = document.getElementById('editAnswer').value;
     if (question && answer) {
-        const cardIndex = flashcards.findIndex(f => f.id === id);
-        flashcards[cardIndex] = { id, question, answer };
+        // fetch put
+
+
         renderFlashcards();
         bootstrap.Modal.getInstance(document.getElementById('editModal')).hide();
     }
