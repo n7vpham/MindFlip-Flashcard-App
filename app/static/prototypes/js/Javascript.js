@@ -324,9 +324,33 @@ function editSet(){
     window.location.href = "manage_flashcards.html";
 
 }
+function editUser() {
+    const payload = {
+        firstName: document.getElementById("fname").value,
+        lastName: document.getElementById("lname").value,
+        email: document.getElementById("email").value,
+        password: document.getElementById("password").value
+    };
 
-
-
+    fetch('/users', {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.redirect) {
+            window.location.href = data.redirect;
+        } else if (data.message) {
+            alert(data.message);
+        } else if (data.error) {
+            alert("Error: " + data.error);
+        }
+    })
+    .catch(err => console.error("Update failed:", err));
+}
 
 /*
 function renderCard(index) {
