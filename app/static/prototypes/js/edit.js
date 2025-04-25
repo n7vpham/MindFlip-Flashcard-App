@@ -39,7 +39,7 @@ function renderFlashcards(filteredCards = flashcards) {
             </div>
             <div class="flashcard-actions">
                 <button class="btn-action btn-edit">Edit</button>
-                <button class="btn-action btn-delete" onclick="deleteFlashcards()">Delete</button>
+                <button class="btn-action btn-delete">Delete</button>
             </div>
         `;
 
