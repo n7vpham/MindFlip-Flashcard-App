@@ -60,7 +60,7 @@ let flashcards = [
 ];
 */
 
-let flashcards = [];
+// let flashcards = [];
 
 function renderFlashcards(filteredCards = flashcards) {
     const container = document.getElementById('flashcardContainer');
@@ -71,8 +71,8 @@ function renderFlashcards(filteredCards = flashcards) {
         div.dataset.id = card.id;
         div.innerHTML = `
             <div class="flashcard-content">
-                <p><strong>Front:</strong> ${card.question}</p>
-                <p><strong>Back:</strong> ${card.answer}</p>
+                <p><strong>Front:</strong> ${card.front}</p>
+                <p><strong>Back:</strong> ${card.back}</p>
             </div>
             <div class="flashcard-actions">
                 <button class="btn-action" onclick="editFlashcard(${card.id})">Edit</button>
@@ -83,39 +83,87 @@ function renderFlashcards(filteredCards = flashcards) {
     });
 }
 
-function createFlashcard() {
+function createFlashcard(set_id) {
     const question = document.getElementById('question').value;
     const answer = document.getElementById('answer').value;
     if (question && answer) {
-        const newId = flashcards.length ? Math.max(...flashcards.map(f => f.id)) + 1 : 1;
-        flashcards.push({ id: newId, question, answer });
-        renderFlashcards();
-        document.getElementById('createForm').reset();
-        bootstrap.Modal.getInstance(document.getElementById('createModal')).hide();
+        // fetch post
+        const data = {
+            front: question,
+            back: answer
+        };
+
+        fetch(`/flashcards/${set_id}/api/create`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            }
+        })
+        .catch(error => {
+            console.error('Error saving flashcard:', error.message);
+            alert(`Error: ${error.message}`);
+        });
+    } else {
+        console.error('Missing question or answer');
+        alert('Error: Missing question or answer');
     }
 }
 
-function editFlashcard(id) {
-    const card = flashcards.find(f => f.id === id);
-    if (card) {
-        document.getElementById('editId').value = id;
-        document.getElementById('editQuestion').value = card.question;
-        document.getElementById('editAnswer').value = card.answer;
+// hold onto the front of a card for edits
+let card_front_identifier;
+
+function editFlashcard(front, back) {
+    card_front_identifier = front;
+    if (front && back) {
+        console.log(card_front_identifier);
+        document.getElementById('editQuestion').value = front;
+        document.getElementById('editAnswer').value = back;
         new bootstrap.Modal(document.getElementById('editModal')).show();
     }
 }
 
-function saveEdit() {
-    const id = parseInt(document.getElementById('editId').value);
+function saveEdit(set_id) {
     const question = document.getElementById('editQuestion').value;
     const answer = document.getElementById('editAnswer').value;
+      
     if (question && answer) {
-        const cardIndex = flashcards.findIndex(f => f.id === id);
-        flashcards[cardIndex] = { id, question, answer };
-        renderFlashcards();
-        bootstrap.Modal.getInstance(document.getElementById('editModal')).hide();
+        // fetch put
+        const data = {
+            old_front: card_front_identifier,
+            front: question,
+            back: answer
+        }
+
+        fetch(`/flashcards/${set_id}/api/edit`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            }
+        })
+        .catch(error => {
+            console.error('Error saving flashcard:', error.message);
+            alert(`Error: ${error.message}`);
+        });
+    } else {
+        console.error('Missing question or answer');
+        alert('Error: Missing question or answer');
     }
 }
+
 
 function deleteSet(setID) {
     fetch(`/flashcards/${setID}`, {

@@ -113,14 +113,14 @@ def del_user_by_id_route(user_id):
 @user_bp.route('/login', methods=["POST", "GET"])
 def login_user():  
     if session.get('user_id'):
-        return redirect(url_for('flashcards.get_all_users_sets_home'))
+        return redirect(url_for('flashcards.get_all_users_sets_home')), 302
     
     if request.method == "GET":
         return render_template('loginsignup.html')
 
     logged_in = login_and_validate_user(request)
     if logged_in:
-        return redirect(url_for('flashcards.get_all_users_sets_home'))
+        return redirect(url_for('flashcards.get_all_users_sets_home')), 303
     else:
         return jsonify({"error": "You were unable to login, please check email or password"}), 401
     
@@ -134,7 +134,7 @@ def logout_user():
             return jsonify({"error": "There is no user logged in"}), 401
 
         session.clear()
-        return render_template('index.html')
+        return render_template('index.html'), 200
     except Exception as e:
         print(f"Logout Error: {e}")
         return jsonify({"error": "An error occurred during logout"}), 500
@@ -142,6 +142,6 @@ def logout_user():
 @user_bp.route('/profile', methods=['GET'])
 def get_profile_page():
     if session.get('user_id'):
-        return render_template('profile.html')
+        return render_template('profile.html'), 200
     else:
-        return redirect(url_for('users.login_user'))
+        return redirect(url_for('users.login_user')), 302

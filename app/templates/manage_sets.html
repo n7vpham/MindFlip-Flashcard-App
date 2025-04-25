@@ -38,8 +38,8 @@
                             <p><strong>Description: </strong>{{ set['setDescription'] }}</p><hr>
                         </div>
                         <div class="flashcard-actions">
-                            <form action="{{ url_for('flashcards.get_specific_user_flashcards', set_id=set['_id']) }}" method="GET">
-                                <button type='submit' class="btn-action">Study</button>
+                            <form action="{{ url_for('flashcards.edit_set_route', set_id=set['_id']) }}" method="GET">
+                                <button type='submit' class="btn-action">Edit</button>
                             </form>
                             <button class="btn-action btn-delete" onclick="deleteSet('{{ set['_id'] }}')">Delete</button>  
                         </div>
