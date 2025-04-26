@@ -22,6 +22,16 @@
         position: relative;
     }
     </style>
+    <style>
+        .fade-out {
+            opacity: 1;
+            transition: opacity 0.5s ease;
+        }
+    
+        .fade-out.hide {
+            opacity: 0;
+        }
+    </style>
 {% endblock %}
 
 {% block nav %}
@@ -61,4 +71,47 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
     <script src="{{ url_for('static', filename='prototypes/js/Javascript.js') }}"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const flashMessages = {{ get_flashed_messages(with_categories = true) | tojson | safe }};
+        if (flashMessages.length > 0) {
+            flashMessages.forEach(([category, message]) => {
+                if (message.startsWith('signup_error_and_switch:')) {
+                    if (typeof showLogin === 'function') {
+                        showLogin();
+                    }
+                    const loginError = message.replace('signup_error_and_switch:', '');
+                    const flashDiv = document.createElement('div');
+                    flashDiv.className = 'alert alert-danger fade-out';
+                    flashDiv.innerText = loginError;
+                    document.querySelector('#card .login-form form').prepend(flashDiv);
+
+                    setTimeout(() => {
+                        flashDiv.classList.add('hide');
+                        setTimeout(() => {
+                            flashDiv.style.display = 'none';
+                        }, 500);
+                    }, 2000);
+                }
+                else if (message.startsWith('signup_success:')) {
+                    if (typeof showLogin === 'function') {
+                        showLogin();
+                    }
+                    const successMessage = message.replace('signup_success:', '');
+                    const flashDiv = document.createElement('div');
+                    flashDiv.className = 'alert alert-success fade-out';
+                    flashDiv.innerText = successMessage;
+                    document.querySelector('#card .login-form form').prepend(flashDiv);
+
+                    setTimeout(() => {
+                        flashDiv.classList.add('hide');
+                        setTimeout(() => {
+                            flashDiv.style.display = 'none';
+                        }, 500);
+                    }, 2000);
+                }
+            });
+        }
+    });
+    </script>
 {% endblock %}
