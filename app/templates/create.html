@@ -23,14 +23,18 @@
 
                 <!-- Manual Entry Form -->
                 <form id="manualForm" class="entry-form" method="POST" action="{{ url_for('flashcards.create_set_route') }}">
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-+">
+                            <input type="text" name="setName" class="form-control" placeholder="Set Name" minlength="1" maxlength="20"
+                                required>
+                        </div>
+                        <div class="col-md-12">
+                            <textarea class="form-control question-input" name="setDescription" placeholder="Set Description" rows="2"
+                                minlength="8" required></textarea>
+                        </div>
+                    </div>
                     <div id="bulkEntries">
                         <div class="bulk-entry-row row g-3 mb-3">
-                            <div class="col-md-+">
-                                <input type="text" name="setName" class="form-control" placeholder="Set Name" minlength="1" maxlength="20" required>
-                            </div>
-                            <div class="col-md-12">
-                                <textarea class="form-control question-input" name="setDescription" placeholder="Set Description" rows="2" minlength="8" required></textarea>
-                            </div>
                             <div class="col-md-6">
                                 <textarea class="form-control question-input" name="front" placeholder="Front" rows="3" required></textarea>
                             </div>
