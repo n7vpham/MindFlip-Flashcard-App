@@ -60,7 +60,6 @@ Example connection string:
 
 ```bash
 mongodb+srv://<username>:<password>@cluster0.p59rbqf.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
-SECRET_KEY=<secret_key>
 ```
 The following steps will guide you through the process of setting up your MongoDB Atlas database and configuring your backend application. 
 After completing the database setup, you will need to navigate to the `/4155-study-project` folder, create a `.env` file, 
