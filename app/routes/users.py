@@ -189,7 +189,8 @@ def login_user():
     if logged_in:
         return redirect(url_for('flashcards.get_all_users_sets_home')), 303
     else:
-        return jsonify({"error": "You were unable to login, please check email or password"}), 401
+        flash('login_error:Incorrect email or password.', 'error')
+        return redirect(url_for('users.login_user'))
     
 
 # POST /users/logout
