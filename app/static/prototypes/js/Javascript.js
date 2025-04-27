@@ -6,6 +6,7 @@ canvas.height = window.innerHeight;
 
 const particlesArray = [];
 const numberOfParticles = 50;
+const originalEmail = document.getElementById("email").value.trim();
 
 class Particle {
     constructor() {
@@ -324,73 +325,71 @@ function editSet(){
     window.location.href = "manage_flashcards.html";
 
 }
-function editUser() {
-    if (event) event.preventDefault();
+function editUser(event) {
+    event.preventDefault();
+
     const firstName = document.getElementById("fname").value.trim();
     const lastName = document.getElementById("lname").value.trim();
     const email = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value;
 
-    // Check validation only if fields are filled (since user can leave them blank to keep current)
-    if (firstName && (firstName.length < 2 || firstName.length > 15)) {
-        alert("First name must be between 2 and 15 characters.");
-        return;
-    }
-
-    if (lastName && (lastName.length < 2 || lastName.length > 15)) {
-        alert("Last name must be between 2 and 15 characters.");
-        return;
-    }
-
-    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        alert("Please enter a valid email address.");
-        return;
-    }
-
-    if (password && password.length < 8) {
-        alert("Password must be at least 8 characters long.");
-        return;
-    }
-
-    const payload = {
-        firstName: firstName,
-        lastName: lastName,
-        email: email,
-        password: password
-    };
+    const payload = { firstName, lastName, email, password };
 
     fetch('/users', {
         method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
     })
     .then(res => res.json())
     .then(data => {
-        const messageBox = document.getElementById("statusMessage");
+        const statusDiv = document.getElementById("statusMessage");
+        statusDiv.classList.remove('alert-success', 'alert-danger', 'fade-out', 'hide');
+        statusDiv.style.display = 'block';
 
-        if (data.redirect) {
-            window.location.href = data.redirect;
+        if (data.error) {
+            statusDiv.classList.add('alert-danger', 'fade-out');
+            statusDiv.innerText = data.error;
+
+            if (data.current_first_name) {
+                document.getElementById("fname").value = data.current_first_name;
+            }
+            if (data.current_last_name) {
+                document.getElementById("lname").value = data.current_last_name;
+            }
+            if (data.current_email) {
+                document.getElementById("email").value = data.current_email;
+            }
         } else if (data.message) {
-            messageBox.textContent = data.message;
-            messageBox.className = "alert alert-success";
-            messageBox.style.display = "block";
-            
-            document.getElementById("password").value = "";
-            
-            // Optional: auto-hide after 3 seconds
-            setTimeout(() => {
-                messageBox.style.display = "none";
-            }, 3000);
-        } else if (data.error) {
-            messageBox.textContent = data.error;
-            messageBox.className = "alert alert-danger";
-            messageBox.style.display = "block";
+            statusDiv.classList.add('alert-success', 'fade-out');
+            statusDiv.innerText = data.message;
         }
+
+        document.getElementById("password").value = '';
+
+        setTimeout(() => {
+            statusDiv.classList.add('hide');
+            setTimeout(() => {
+                statusDiv.style.display = 'none';
+            }, 500);
+        }, 2500);
     })
-    
-    .catch(err => console.error("Update failed:", err));
+    .catch(err => {
+        console.error("Update failed:", err);
+        const statusDiv = document.getElementById("statusMessage");
+        statusDiv.classList.remove('alert-success', 'alert-danger', 'fade-out', 'hide');
+        statusDiv.classList.add('alert-danger', 'fade-out');
+        statusDiv.style.display = 'block';
+        statusDiv.innerText = "An unexpected error occurred.";
+
+        document.getElementById("email").value = originalEmail;
+
+        setTimeout(() => {
+            statusDiv.classList.add('hide');
+            setTimeout(() => {
+                statusDiv.style.display = 'none';
+            }, 500);
+        }, 2500);
+    });
 }
 
 /*

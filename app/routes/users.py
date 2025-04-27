@@ -42,7 +42,16 @@ user_bp.register_blueprint(flashcard_bp)#, url_prefix='/<user_id>')
 @user_bp.route("/", methods=['POST'])
 def create_user_route():
     # Construct user object with submitted form
+    db = current_app.config['DB']
+    users_collection = db['users']
+
     user = request.form
+    email = user.get('email', '').strip().lower()
+
+    if users_collection.find_one({'email': email}):
+        flash('signup_error_and_switch:Email is already registered. Please log in.', 'error')
+        return redirect(url_for('users.login_user'))
+    
     try:
         validated_user = create_user(user)
     except ValidationError as err:
@@ -55,8 +64,8 @@ def create_user_route():
     except:
         return jsonify({"error": "Error: Unable to save user"}), 404
 
-    flash("Successfully created an account")
-    return redirect(url_for('main.show'))
+    flash('signup_success:Account created! Please log in.', 'success')
+    return redirect(url_for('users.login_user'))
 
 # GET /users/<user_id>
 # Returns a user based on their user_id in the form of a dictionary
@@ -124,7 +133,22 @@ def update_user_by_id():
             update_fields['lastName'] = data['lastName']
 
         if 'email' in data and len(data['email']) > 0:
-            update_fields['email'] = data['email']
+            new_email = data['email'].strip().lower()
+            existing_user = users_collection.find_one({'email': new_email})
+            
+            if existing_user and str(existing_user['_id']) != user_id:
+                current_user = users_collection.find_one({"_id": ObjectId(user_id)})
+                current_first_name = current_user.get('firstName', '')
+                current_last_name = current_user.get('lastName', '')
+                current_email = current_user.get('email', '')
+                return jsonify({
+                    "error": "This email address is already in use.",
+                    "current_first_name": current_first_name,
+                    "current_last_name": current_last_name,
+                    "current_email": current_email
+                }), 400
+
+            update_fields['email'] = new_email
 
         if 'password' in data and data['password'].strip() != "":
             update_fields['password'] = generate_password_hash(data['password'])

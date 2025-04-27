@@ -9,6 +9,16 @@
     <!-- Montserrat Font -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='prototypes/css/styles.css') }}">
+    <style>
+        .fade-out {
+            opacity: 1;
+            transition: opacity 0.5s ease;
+        }
+    
+        .fade-out.hide {
+            opacity: 0;
+        }
+    </style>
 {% endblock %}
 
 {% block content %}
