@@ -65,7 +65,7 @@ The following steps will guide you through the process of setting up your MongoD
 After completing the database setup, you will need to navigate to the `/4155-study-project` folder, create a `.env` file, 
 and add your MongoDB connection URI along with the secret key provided by the development team to complete the backend configuration.
 
-Inside your `.env` file, add the following lines:
+Inside your `.env` file, add the following lines
 
 ```env
 MONGO_URI=mongodb+srv://<username>:<password>@cluster0.p59rbqf.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
@@ -73,6 +73,7 @@ SECRET_KEY=<secret_key>
 ```
 
 ## Python Virtual Environment Setup (recommended)
+
 **1. Create a virtual environment in the root directory**
 ```bash
 python -m venv venv
