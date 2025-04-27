@@ -72,7 +72,7 @@ MONGO_URI=mongodb+srv://<username>:<password>@cluster0.p59rbqf.mongodb.net/?retr
 SECRET_KEY=<secret_key>
 ```
 
-### Python Virtual Environment Setup (recommended)
+## Python Virtual Environment Setup (recommended)
 **1. Create a virtual environment in the root directory**
 ```bash
 python -m venv venv
