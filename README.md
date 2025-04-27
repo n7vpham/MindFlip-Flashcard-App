@@ -26,7 +26,7 @@ Once your database is fully configured, you can proceed with setting up the back
  
 2. Deploy a Cluster
 - After logging in, click "Create a Cluster".
--  Choose the Free Tier (Shared Cluster).
+-  Choose the Free Tier .
 -  Select:
 -  Provider: AWS (default)
 -  Region: N. Virginia (us-east-1) (recommended).
