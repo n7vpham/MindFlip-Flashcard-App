@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, abort
+from flask import Blueprint, render_template, abort, session, redirect, url_for
 from jinja2 import TemplateNotFound
 
 main_bp = Blueprint('main', __name__)
@@ -10,8 +10,14 @@ main_bp = Blueprint('main', __name__)
 @main_bp.route('/', defaults={'page': 'index'})
 @main_bp.route('/<page>')
 def show(page):
+    if session.get('user_id') and page == 'index':
+        return redirect(url_for('flashcards.get_all_users_sets_home'))
+
     try:
         return render_template(f'{page}.html')
     except TemplateNotFound:
         abort(404)
 
+@main_bp.route('/index.html')
+def redirect_index_html():
+    return redirect(url_for('main.show', page='index'))

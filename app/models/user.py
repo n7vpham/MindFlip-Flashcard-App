@@ -70,12 +70,12 @@ def update_user(user_id, json):
 def delete_user_by_id(user_id):
     db = current_app.config['DB']
     collection = db['users']
-     
+    
     try:
         deleted_user = collection.delete_one({"_id": ObjectId(user_id)})
         if deleted_user.deleted_count == 0:
             return False
-         
+        
         return True
     except Exception as e:
         print(e)

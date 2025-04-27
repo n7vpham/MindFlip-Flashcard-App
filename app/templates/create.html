@@ -26,10 +26,10 @@
                     <div id="bulkEntries">
                         <div class="bulk-entry-row row g-3 mb-3">
                             <div class="col-md-+">
-                                <input type="text" name="setName" class="form-control" placeholder="Set Name" required minlength="1" maxlength="20">
+                                <input type="text" name="setName" class="form-control" placeholder="Set Name" minlength="1" maxlength="20" required>
                             </div>
                             <div class="col-md-12">
-                                <textarea class="form-control question-input" name="setDescription" placeholder="Set Description" rows="2" required minlength="8"></textarea>
+                                <textarea class="form-control question-input" name="setDescription" placeholder="Set Description" rows="2" minlength="8" required></textarea>
                             </div>
                             <div class="col-md-6">
                                 <textarea class="form-control question-input" name="front" placeholder="Front" rows="3" required></textarea>
@@ -49,21 +49,21 @@
                 </form>
 
                 <!-- File Upload Form -->
-                <form id="uploadForm" class="entry-form" style="display: none;" method="POST" enctype="multipart/form-data">
+                <form id="uploadForm" class="entry-form" style="display: none;" method="POST" enctype="multipart/form-data" onsubmit="return uploadFile()">
                     <div class="mb-3">
                         <!-- removed onchange="previewFlashcards(this)" -->
-                        <input type="file" name="file" class="form-control file-input" id="csvFile" accept=".csv,.txt,.md">
+                        <input type="file" name="file" class="form-control file-input" id="csvFile" accept=".md" required>
                     </div>
                     <div id="previewArea" class="preview-area mb-3"></div>
                     <div class="d-flex justify-content-end">
                         <div class="col-md-12">
-                            <input class="form-control" name="setName" placeholder="Set Name" required><br>
-                            <textarea class="form-control question-input" name="setDescription" placeholder="Set Description" rows="3" required></textarea>
+                            <input class="form-control" name="setName" placeholder="Set Name" minlength="1" maxlength="20" required><br>
+                            <textarea class="form-control question-input" name="setDescription" placeholder="Set Description" rows="3" minlength="8" required></textarea>
                         </div>
                     </div>
                     <br>
                     <div class="d-flex justify-content-between mb-3">
-                        <button type="button" class="btn btn-custom" onclick="uploadFile()">Submit</button>
+                        <button type="submit" class="btn btn-custom">Submit</button>
                     </div>
                 </form>
             </div>

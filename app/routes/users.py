@@ -119,7 +119,7 @@ def update_user_by_id():
         if 'firstName' in data and len('firstName') > 0:
             update_fields['firstName'] = data['firstName']
             session['firstName'] = data['firstName']
- 
+
         if 'lastName' in data and len(data['lastName']) > 0:
             update_fields['lastName'] = data['lastName']
 
@@ -140,7 +140,7 @@ def update_user_by_id():
         if result.matched_count == 0:
             return jsonify({"error": "User not found"}), 404
 
-        return jsonify({"redirect": url_for('flashcards.get_all_users_sets_home')}), 200
+        return jsonify({"message": "Changes saved successfully!"}), 200
 
     except pymongo.errors.PyMongoError as e:
         print(f"MongoDB error: {e}")
@@ -185,6 +185,17 @@ def logout_user():
 @user_bp.route('/profile', methods=['GET'])
 def get_profile_page():
     if session.get('user_id'):
-        return render_template('profile.html'), 200
+        user_id = session['user_id']
+        user = get_user_by_id(user_id)
+
+        if not user:
+            return redirect(url_for('users.login_user')), 302
+
+        return render_template(
+            'profile.html',
+            first_name=user.get('firstName', ''),
+            last_name=user.get('lastName', ''),
+            email=user.get('email', '')
+        ), 200
     else:
         return redirect(url_for('users.login_user')), 302
