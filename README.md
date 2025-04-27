@@ -14,13 +14,64 @@ Hello! This is our project for ITSC-4155. The aim of our project is to create a 
  - Nam Pham
 
 ## Backend Development
-To start the backend development server, first navigate to /4155-study-project (root folder).
-Configure your connection to the database by creating a .env file and adding these lines:
+Before setting up the backend development server, you must first create and configure your MongoDB Atlas database.  
+To do this, you will need to sign up for a MongoDB Atlas account, deploy a database cluster, set up your connection credentials, and obtain your MongoDB connection URI.  
+Once your database is fully configured, you can proceed with setting up the backend project.
+
+1. Create a MongoDB Atlas Account
+- Go to MongoDB Atlas. https://account.mongodb.com/account/register
+- Sign up using Google, GitHub, or manually with email and password.
+  ![MongoDB Atlas Signup](images/1.png)
+
+ 
+2. Deploy a Cluster
+- After logging in, click "Create a Cluster".
+-  Choose the Free Tier (Shared Cluster).
+-  Select:
+-  Provider: AWS (default)
+-  Region: N. Virginia (us-east-1) (recommended).
+-  Cluster name: leave as default (Cluster0).
+-  Click "Create Deployment".
+   ![MongoDB Atlas Signup](images/3.png)
+
+3. Connect to Your Cluster
+
+- Click **Connect** next to your cluster.
+- MongoDB will automatically detect your IP address.
+- It will also **auto-generate a Database User** with random username and password.
+- You can accept the auto-generated user, or create your own username and password manually.
+- This database user is needed later for your application to connect.
+  ![Create Database User](images/4.png)
+
+4. Choose a Connection Method
+
+- After creating your database user, MongoDB Atlas asks you to **choose a connection method**.
+- Select **Drivers** (Node.js, Python, etc.).
+  ![Choose Driver Option](images/5.png)
+
+5. Copy the Connection String
+
+- MongoDB will now display your **connection string**.
+- This string is needed to connect from your application.
+- Replace `<username>` and `<password>` in the connection string with your database credentials.
+ ![Choose Driver Option](images/8.png)
+ 
+Example connection string:
+
 ```bash
-URI=mongodb+srv://<username>:<password>@fsb-cluster.7u2uh.mongodb.net/?retryWrites=true&w=majority&appName=fsb-cluster
+mongodb+srv://<username>:<password>@cluster0.p59rbqf.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
 SECRET_KEY=<secret_key>
 ```
-Make sure to replace &lt;username&gt; and &lt;password&gt; with your credentials found on Mongo, then replace &lt;secret_key&gt; with the secret key provided by the development team.
+The following steps will guide you through the process of setting up your MongoDB Atlas database and configuring your backend application. 
+After completing the database setup, you will need to navigate to the `/4155-study-project` folder, create a `.env` file, 
+and add your MongoDB connection URI along with the secret key provided by the development team to complete the backend configuration.
+
+Inside your `.env` file, add the following lines:
+
+```env
+MONGO_URI=mongodb+srv://<username>:<password>@cluster0.p59rbqf.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
+SECRET_KEY=<secret_key>
+```
 
 ### Python Virtual Environment Setup (recommended)
 **1. Create a virtual environment in the root directory**
