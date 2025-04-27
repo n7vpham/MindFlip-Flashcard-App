@@ -1,4 +1,16 @@
 // edit.js
+document.addEventListener('DOMContentLoaded', function () {
+    const searchInput = document.getElementById('searchInput');
+    const filterSelect = document.getElementById('filterSelect');
+    const clearButton = document.getElementById('clearButton');
+
+    searchInput.addEventListener('input', filterFlashcards);
+    filterSelect.addEventListener('change', filterFlashcards);
+    clearButton.addEventListener('click', function () {
+        searchInput.value = '';
+        filterFlashcards();
+    });
+});
 
 function deleteFlashcard(front) {
     const data = {card_front: front};
@@ -53,6 +65,51 @@ function renderFlashcards(filteredCards = flashcards) {
 
         container.appendChild(div);
         index++;
+    });
+}
+
+let fadeTimers = new Map();
+
+function filterFlashcards() {
+    const searchInput = document.getElementById('searchInput').value.trim().toLowerCase();
+    const filterType = document.getElementById('filterSelect').value;
+    const flashcardDivs = document.querySelectorAll('.flashcard');
+
+    flashcardDivs.forEach(div => {
+        const front = div.querySelector('.fl-front')?.textContent.split(':')[1]?.trim().toLowerCase() || '';
+        const back = div.querySelector('.fl-back')?.textContent.split(':')[1]?.trim().toLowerCase() || '';
+
+        let isVisible = false;
+        if (filterType === 'all') {
+            isVisible = front.includes(searchInput) || back.includes(searchInput);
+        } else if (filterType === 'front') {
+            isVisible = front.includes(searchInput);
+        } else if (filterType === 'back') {
+            isVisible = back.includes(searchInput);
+        }
+
+        if (searchInput === '' || isVisible) {
+            if (fadeTimers.has(div)) {
+                clearTimeout(fadeTimers.get(div));
+                fadeTimers.delete(div);
+            }
+            div.style.display = 'flex';
+            div.classList.remove('fade-out-card');
+            div.classList.add('fade-in-card');
+        } else {
+            if (!div.classList.contains('fade-out-card')) {
+                div.classList.remove('fade-in-card');
+                div.classList.add('fade-out-card');
+
+                const timer = setTimeout(() => {
+                    div.style.display = 'none';
+                    div.classList.add('hidden-card');
+                    fadeTimers.delete(div);
+                }, 500);
+
+                fadeTimers.set(div, timer);
+            }
+        }
     });
 }
 

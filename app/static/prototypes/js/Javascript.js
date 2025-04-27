@@ -6,7 +6,11 @@ canvas.height = window.innerHeight;
 
 const particlesArray = [];
 const numberOfParticles = 50;
-const originalEmail = document.getElementById("email").value.trim();
+let originalEmail = "";
+const emailInput = document.getElementById("email");
+if (emailInput) {
+    originalEmail = emailInput.value.trim();
+}
 
 class Particle {
     constructor() {

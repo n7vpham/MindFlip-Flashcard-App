@@ -110,6 +110,23 @@
                         }, 500);
                     }, 2000);
                 }
+                else if (message.startsWith('login_error:')) {
+                    if (typeof showLogin === 'function') {
+                        showLogin();
+                    }
+                    const loginError = message.replace('login_error:', '');
+                    const flashDiv = document.createElement('div');
+                    flashDiv.className = 'alert alert-danger fade-out';
+                    flashDiv.innerText = loginError;
+                    document.querySelector('#card .login-form form').prepend(flashDiv);
+
+                    setTimeout(() => {
+                        flashDiv.classList.add('hide');
+                        setTimeout(() => {
+                            flashDiv.style.display = 'none';
+                        }, 500);
+                    }, 2000);
+                }
             });
         }
     });

@@ -275,10 +275,10 @@ def upload_flashcards():
 
     isSaved = save_set_for_user(user, set_id, set_name)
     if not isSaved:
-        flash(f'Error saving the flashcards to {user['firstName']}\'s collection', 'error')
+        flash(f"Error saving the flashcards to {user['firstName']}'s collection", 'error')
         return redirect(request.referrer or url_for('main.show'))
 
-    flash(f'Flaschards successfully created in {user['firstName']}\'s collection', 'success')
+    flash(f"Flashcards successfully created in {user['firstName']}'s collection", 'success')
     return redirect(url_for('flashcards.get_all_users_sets_manage'))
     
 @flashcard_bp.route('/flashcards/<set_id>/edit', methods=['GET', 'PUT'])

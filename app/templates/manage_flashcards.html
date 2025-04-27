@@ -1,8 +1,23 @@
 {% extends "base.html" %}
-{% block title %}edit{% endblock %}
 
 {% block head %}
     {{ super() }}
+    <style>
+        .fade-in-card {
+            opacity: 1;
+            transition: opacity 0.5s ease;
+        }
+
+        .fade-out-card {
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+        
+        .hidden-card {
+            display: none;
+        }
+    </style>
+    <title>MindFlip - Manage Flashcards</title>
 {% endblock %}
 
 {% block nav %}
@@ -17,17 +32,17 @@
             <div class="search-filter">
                 <div class="row g-3">
                     <div class="col-md-6">
-                        <input type="text" class="form-control" id="searchInput" placeholder="Search flashcards...">
+                        <input type="text" class="form-control" id="searchInput" placeholder="Filter flashcards by...">
                     </div>
                     <div class="col-md-4">
-                        <select class="form-select" id="filterSelect">
-                            <option value="all">All</option>
-                            <option value="front">By Front</option>
-                            <option value="back">By Back</option>
+                        <select id="filterSelect" class="form-select">
+                            <option value="all">All Fields</option>
+                            <option value="front">Front Text</option>
+                            <option value="back">Back Text</option>
                         </select>
                     </div>
                     <div class="col-md-2">
-                        <button class="btn btn-custom w-500" onclick="searchFlashcards()">Search</button><hr>
+                        <button id="clearButton" class="btn btn-custom w-500" type="button">Clear</button><hr>
                         <button class="btn btn-custom w-100" data-bs-toggle="modal" data-bs-target="#createModal">Create</button>
                     </div>
                 </div>
